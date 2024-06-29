@@ -1,7 +1,7 @@
 use std::mem::size_of;
 
 use ore_api::consts::*;
-use ore_stake_api::{consts::*, instruction::InitializeArgs, state::Stake};
+use ore_stake_api::{consts::*, instruction::InitializeArgs, loaders::*, state::Stake};
 use solana_program::{
     account_info::AccountInfo,
     entrypoint::ProgramResult,
@@ -11,10 +11,7 @@ use solana_program::{
     sysvar::{self},
 };
 
-use crate::{
-    loaders::*,
-    utils::{create_pda, AccountDeserialize, Discriminator},
-};
+use crate::utils::{create_pda, AccountDeserialize, Discriminator};
 
 /// Initializes a new stake account.
 pub fn process_initialize<'a, 'info>(

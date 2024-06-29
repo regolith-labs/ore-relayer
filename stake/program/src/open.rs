@@ -1,15 +1,12 @@
 use std::mem::size_of;
 
-use ore_stake_api::{consts::*, instruction::OpenArgs, state::Delegate};
+use ore_stake_api::{consts::*, instruction::OpenArgs, loaders::*, state::Delegate};
 use solana_program::{
     account_info::AccountInfo, entrypoint::ProgramResult, program_error::ProgramError,
     pubkey::Pubkey, system_program,
 };
 
-use crate::{
-    loaders::*,
-    utils::{create_pda, AccountDeserialize, Discriminator},
-};
+use crate::utils::{create_pda, AccountDeserialize, Discriminator};
 
 /// Opens a new delegate account.
 pub fn process_open<'a, 'info>(

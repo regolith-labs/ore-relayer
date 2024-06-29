@@ -1,7 +1,8 @@
-use ore_api::consts::MINT_ADDRESS;
+use ore_api::{consts::MINT_ADDRESS, loaders::*};
 use ore_stake_api::{
     consts::*,
     instruction::DelegateArgs,
+    loaders::*,
     state::{Delegate, Stake},
 };
 use solana_program::{
@@ -9,7 +10,11 @@ use solana_program::{
     pubkey::Pubkey,
 };
 
-use crate::{loaders::*, utils::AccountDeserialize};
+use crate::utils::AccountDeserialize;
+
+// TODO Hold ORE in escrow until it is manually activated.
+//      Otherwise the delegate function can maliciously be used to nullify a miner's multiplier (one-minute warmup requirement).
+//      Figure out how to safely withdraw given some stake might not be activated yet.
 
 /// Delegates ORE to a stake account.
 pub fn process_delegate<'a, 'info>(

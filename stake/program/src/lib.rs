@@ -1,11 +1,12 @@
 mod delegate;
 mod initialize;
-mod loaders;
 mod open;
+mod withdraw;
 
 use delegate::*;
 use initialize::*;
 use open::*;
+use withdraw::*;
 
 use ore_stake_api::instruction::*;
 use solana_program::{
@@ -35,6 +36,7 @@ pub fn process_instruction(
         StakeInstruction::Initialize => process_initialize(program_id, accounts, data)?,
         StakeInstruction::Open => process_open(program_id, accounts, data)?,
         StakeInstruction::Delegate => process_delegate(program_id, accounts, data)?,
+        StakeInstruction::Withdraw => process_withdraw(program_id, accounts, data)?,
     }
 
     Ok(())

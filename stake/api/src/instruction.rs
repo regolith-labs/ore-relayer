@@ -47,8 +47,17 @@ pub enum StakeInstruction {
     #[account(8, name = "token_program", desc = "SPL token program")]
     Delegate = 2, 
 
+    #[account(0, name = "stake_program", desc = "ORE stake program")]
+    #[account(1, name = "signer", desc = "Signer", signer)]
+    #[account(2, name = "delegate", desc = "ORE stake delegate account", writable)]
+    #[account(3, name = "proof", desc = "ORE proof account", writable)]
+    #[account(4, name = "beneficiary", desc = "Beneficiary token account", writable)]
+    #[account(5, name = "stake", desc = "ORE stake account", writable)]
+    #[account(6, name = "stake_tokens", desc = "ORE stake escrow account", writable)]
+    #[account(7, name = "treasury_tokens", desc = "ORE treasury token account", writable)]
+    #[account(8, name = "token_program", desc = "SPL token program")]
+    Withdraw = 3
 
-    // TODO Claim with delegate account
     // TODO Close delegate account
     // TODO Update stake account
 }
@@ -78,13 +87,21 @@ pub struct DelegateArgs {
     pub amount: u64,
 }
 
+#[repr(C)]
+#[derive(Clone, Copy, Debug, Pod, Zeroable)]
+pub struct WithdrawArgs {
+    pub amount: u64,
+}
+
 impl_to_bytes!(OpenArgs);
 impl_to_bytes!(DelegateArgs);
 impl_to_bytes!(InitializeArgs);
+impl_to_bytes!(WithdrawArgs);
 
 impl_instruction_from_bytes!(OpenArgs);
 impl_instruction_from_bytes!(DelegateArgs);
 impl_instruction_from_bytes!(InitializeArgs);
+impl_instruction_from_bytes!(WithdrawArgs);
 
 /// Builds an initialize instruction.
 pub fn initialize(signer: Pubkey) -> Instruction {
