@@ -22,8 +22,11 @@ pub enum StakeInstruction {
     #[account(2, name = "miner", desc = "Miner authority")]
     #[account(3, name = "proof", desc = "ORE proof account", writable)]
     #[account(4, name = "stake", desc = "ORE stake account", writable)]
-    #[account(5, name = "system_program", desc = "Solana system program")]
-    #[account(6, name = "slot_hashes", desc = "Solana slot hashes sysvar")]
+    #[account(5, name = "stake_tokens", desc = "ORE stake escrow account", writable)]
+    #[account(6, name = "system_program", desc = "Solana system program")]
+    #[account(7, name = "token_program", desc = "SPL token program")]
+    #[account(8, name = "associated_token_program", desc = "SPL associated token program")]
+    #[account(9, name = "slot_hashes", desc = "Solana slot hashes sysvar")]
     Initialize = 0, 
 
     #[account(0, name = "stake_program", desc = "ORE stake program")]
@@ -39,12 +42,12 @@ pub enum StakeInstruction {
     #[account(3, name = "proof", desc = "ORE proof account", writable)]
     #[account(4, name = "sender", desc = "Signer token account", writable)]
     #[account(5, name = "stake", desc = "ORE stake account", writable)]
-    #[account(6, name = "treasury_tokens", desc = "ORE treasury token account", writable)]
-    #[account(7, name = "token_program", desc = "SPL token program")]
+    #[account(6, name = "stake_tokens", desc = "ORE stake escrow account", writable)]
+    #[account(7, name = "treasury_tokens", desc = "ORE treasury token account", writable)]
+    #[account(8, name = "token_program", desc = "SPL token program")]
     Delegate = 2, 
 
 
-    // TODO Stake with delegate account
     // TODO Claim with delegate account
     // TODO Close delegate account
     // TODO Update stake account
