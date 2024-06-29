@@ -1,0 +1,29 @@
+[package]
+name = "ore-stake-program"
+description = "A delegated liquid staking program for ORE miners"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+homepage.workspace = true
+documentation.workspace = true
+repository.workspace = true
+readme.workspace = true
+keywords.workspace = true
+
+[lib]
+crate-type = ["cdylib", "lib"]
+name = "ore_stake"
+
+[features]
+no-entrypoint = []
+default = []
+
+[dependencies]
+mpl-token-metadata.workspace = true
+ore-api = { path = "../../core/api" }
+ore-stake-api = { path = "../api" }
+solana-program.workspace = true
+spl-token.workspace = true
+spl-associated-token-account.workspace = true
+utils.workspace = true
+

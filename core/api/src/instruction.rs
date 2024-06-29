@@ -50,8 +50,10 @@ pub enum OreInstruction {
 
     #[account(0, name = "ore_program", desc = "Ore program")]
     #[account(1, name = "signer", desc = "Signer", signer)]
-    #[account(2, name = "proof", desc = "Ore proof account", writable)]
-    #[account(3, name = "system_program", desc = "Solana system program")]
+    #[account(2, name = "miner", desc = "Miner authority")]
+    #[account(3, name = "proof", desc = "Ore proof account", writable)]
+    #[account(4, name = "system_program", desc = "Solana system program")]
+    #[account(5, name = "slot_hashes", desc = "Solana slot hashes sysvar")]
     Open = 4,
 
     #[account(0, name = "ore_program", desc = "Ore program")]

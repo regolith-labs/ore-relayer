@@ -1,6 +1,6 @@
 [package]
 name = "utils"
-description = "Utils for building ORE programs"
+description = "Utility functions and macros for ORE programs"
 version.workspace = true
 edition.workspace = true
 license.workspace = true
@@ -16,3 +16,4 @@ name = "utils"
 [dependencies]
 bytemuck.workspace = true
 solana-program.workspace = true
+spl-token.workspace = true
