@@ -26,12 +26,14 @@ pub fn process_initialize<'a, 'info>(
     let args = InitializeArgs::try_from_bytes(data)?;
 
     // Load accounts.
-    let [signer, miner_info, proof_info, stake_info, system_program, slot_hashes_info] = accounts
+    let [signer, miner_info, mint_info, proof_info, stake_info, stake_tokens_info, system_program, token_program, associated_token_program, slot_hashes_info] =
+        accounts
     else {
         return Err(ProgramError::NotEnoughAccountKeys);
     };
     load_signer(signer)?;
     load_system_account(miner_info, false)?;
+    load_mint(mint_info, MINT_ADDRESS, false)?;
     load_uninitialized_pda(
         proof_info,
         &[PROOF, stake_info.key.as_ref()],
@@ -39,12 +41,15 @@ pub fn process_initialize<'a, 'info>(
         &ore_api::id(),
     )?;
     load_uninitialized_pda(
-        proof_info,
+        stake_info,
         &[STAKE, signer.key.as_ref()],
         args.stake_bump,
         &ore_api::id(),
     )?;
+    load_system_account(stake_tokens_info, true)?;
     load_program(system_program, system_program::id())?;
+    load_program(token_program, spl_token::id())?;
+    load_program(associated_token_program, spl_associated_token_account::id())?;
     load_sysvar(slot_hashes_info, sysvar::slot_hashes::id())?;
 
     // Initialize the stake account.
@@ -64,6 +69,25 @@ pub fn process_initialize<'a, 'info>(
     stake.is_liquid = 0;
     stake.is_open = 0;
     drop(stake_data);
+
+    // Initialize a token account to escrow stake.
+    solana_program::program::invoke(
+        &spl_associated_token_account::instruction::create_associated_token_account(
+            signer.key,
+            stake_info.key,
+            mint_info.key,
+            &spl_token::id(),
+        ),
+        &[
+            associated_token_program.clone(),
+            signer.clone(),
+            stake_tokens_info.clone(),
+            stake_info.clone(),
+            mint_info.clone(),
+            system_program.clone(),
+            token_program.clone(),
+        ],
+    )?;
 
     // Open a proof account for mining.
     solana_program::program::invoke_signed(

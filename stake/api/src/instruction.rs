@@ -39,9 +39,8 @@ pub enum StakeInstruction {
     #[account(3, name = "proof", desc = "ORE proof account", writable)]
     #[account(4, name = "sender", desc = "Signer token account", writable)]
     #[account(5, name = "stake", desc = "ORE stake account", writable)]
-    #[account(6, name = "treasury", desc = "ORE treasury account", writable)]
-    #[account(7, name = "treasury_tokens", desc = "ORE treasury token account", writable)]
-    #[account(8, name = "token_program", desc = "SPL token program")]
+    #[account(6, name = "treasury_tokens", desc = "ORE treasury token account", writable)]
+    #[account(7, name = "token_program", desc = "SPL token program")]
     Delegate = 2, 
 
 
