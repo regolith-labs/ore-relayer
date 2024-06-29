@@ -24,7 +24,31 @@ pub enum StakeInstruction {
     #[account(4, name = "stake", desc = "ORE stake account", writable)]
     #[account(5, name = "system_program", desc = "Solana system program")]
     #[account(6, name = "slot_hashes", desc = "Solana slot hashes sysvar")]
-    Open = 0,
+    Initialize = 0, 
+
+    #[account(0, name = "stake_program", desc = "ORE stake program")]
+    #[account(1, name = "signer", desc = "Signer", signer)]
+    #[account(2, name = "delegate", desc = "ORE stake delegate account", writable)]
+    #[account(3, name = "stake", desc = "ORE stake account")]
+    #[account(4, name = "system_program", desc = "Solana system program")]
+    Open = 1, 
+
+    #[account(0, name = "stake_program", desc = "ORE stake program")]
+    #[account(1, name = "signer", desc = "Signer", signer)]
+    #[account(2, name = "delegate", desc = "ORE stake delegate account", writable)]
+    #[account(3, name = "proof", desc = "ORE proof account", writable)]
+    #[account(4, name = "sender", desc = "Signer token account", writable)]
+    #[account(5, name = "stake", desc = "ORE stake account", writable)]
+    #[account(6, name = "treasury", desc = "ORE treasury account", writable)]
+    #[account(7, name = "treasury_tokens", desc = "ORE treasury token account", writable)]
+    #[account(8, name = "token_program", desc = "SPL token program")]
+    Delegate = 2, 
+
+
+    // TODO Stake with delegate account
+    // TODO Claim with delegate account
+    // TODO Close delegate account
+    // TODO Update stake account
 }
 
 impl StakeInstruction {
@@ -35,17 +59,33 @@ impl StakeInstruction {
 
 #[repr(C)]
 #[derive(Clone, Copy, Debug, Pod, Zeroable)]
-pub struct OpenArgs {
+pub struct InitializeArgs {
     pub proof_bump: u8,
     pub stake_bump: u8,
 }
 
+#[repr(C)]
+#[derive(Clone, Copy, Debug, Pod, Zeroable)]
+pub struct OpenArgs {
+    pub bump: u8,
+}
+
+#[repr(C)]
+#[derive(Clone, Copy, Debug, Pod, Zeroable)]
+pub struct DelegateArgs {
+    pub amount: u64,
+}
+
 impl_to_bytes!(OpenArgs);
+impl_to_bytes!(DelegateArgs);
+impl_to_bytes!(InitializeArgs);
 
 impl_instruction_from_bytes!(OpenArgs);
+impl_instruction_from_bytes!(DelegateArgs);
+impl_instruction_from_bytes!(InitializeArgs);
 
-/// Builds an open instruction.
-pub fn open(signer: Pubkey) -> Instruction {
+/// Builds an initialize instruction.
+pub fn initialize(signer: Pubkey) -> Instruction {
     let stake_pda = Pubkey::find_program_address(&[STAKE, signer.as_ref()], &crate::id());
     let proof_pda = Pubkey::find_program_address(&[PROOF, stake_pda.0.as_ref()], &ore_api::id());
     Instruction {
@@ -59,7 +99,7 @@ pub fn open(signer: Pubkey) -> Instruction {
         ],
         data: [
             StakeInstruction::Open.to_vec(),
-            OpenArgs {
+            InitializeArgs {
                 proof_bump: proof_pda.1,
                 stake_bump: stake_pda.1,
             }

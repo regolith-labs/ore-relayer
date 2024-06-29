@@ -13,6 +13,9 @@ pub struct Stake {
     /// The signer authorized to use this stake account.
     pub authority: Pubkey,
 
+    /// The aggregate amount of ORE delegated to this stake account.
+    pub balance: u64,
+
     /// The account bump used for signing CPIs.
     pub bump: u64,
 

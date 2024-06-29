@@ -1,6 +1,10 @@
+mod delegate;
+mod initialize;
 mod loaders;
 mod open;
 
+use delegate::*;
+use initialize::*;
 use open::*;
 
 use ore_stake_api::instruction::*;
@@ -28,7 +32,9 @@ pub fn process_instruction(
         .ok_or(ProgramError::InvalidInstructionData)?;
 
     match StakeInstruction::try_from(*tag).or(Err(ProgramError::InvalidInstructionData))? {
+        StakeInstruction::Initialize => process_initialize(program_id, accounts, data)?,
         StakeInstruction::Open => process_open(program_id, accounts, data)?,
+        StakeInstruction::Delegate => process_delegate(program_id, accounts, data)?,
     }
 
     Ok(())
