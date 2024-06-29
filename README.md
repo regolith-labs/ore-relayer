@@ -5,4 +5,4 @@
 
 ## Programs
 - [`Core`](core) - ORE mining program.
-- [`Stake`](stake) - ORE staking program.
+- [`Stake`](stake) - ORE delegated liquid staking program.
