@@ -10,11 +10,7 @@ use solana_program::{
 use crate::utils::AccountDeserialize;
 
 /// Crown flags an account as the top staker if their balance is greater than the last known top staker.
-pub fn process_crown<'a, 'info>(
-    _program_id: &Pubkey,
-    accounts: &'a [AccountInfo<'info>],
-    _data: &[u8],
-) -> ProgramResult {
+pub fn process_crown<'a, 'info>(accounts: &'a [AccountInfo<'info>], _data: &[u8]) -> ProgramResult {
     // Load accounts
     let [signer, config_info, proof_info, proof_new_info] = accounts else {
         return Err(ProgramError::NotEnoughAccountKeys);

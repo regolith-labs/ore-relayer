@@ -12,14 +12,12 @@ use ore_stake_api::{
 };
 use solana_program::{
     account_info::AccountInfo, entrypoint::ProgramResult, program_error::ProgramError,
-    pubkey::Pubkey,
 };
 
 use crate::utils::AccountDeserialize;
 
 /// Withdraw ORE from a delegated stake account.
 pub fn process_withdraw<'a, 'info>(
-    _program_id: &Pubkey,
     accounts: &'a [AccountInfo<'info>],
     data: &[u8],
 ) -> ProgramResult {

@@ -6,7 +6,6 @@ use solana_program::{
     account_info::AccountInfo,
     entrypoint::ProgramResult,
     program_error::ProgramError,
-    pubkey::Pubkey,
     system_program,
     sysvar::{self},
 };
@@ -15,7 +14,6 @@ use crate::utils::{create_pda, AccountDeserialize, Discriminator};
 
 /// Initializes a new stake account.
 pub fn process_initialize<'a, 'info>(
-    _program_id: &Pubkey,
     accounts: &'a [AccountInfo<'info>],
     data: &[u8],
 ) -> ProgramResult {

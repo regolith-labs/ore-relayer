@@ -27,14 +27,14 @@ pub enum StakeInstruction {
     #[account(7, name = "token_program", desc = "SPL token program")]
     #[account(8, name = "associated_token_program", desc = "SPL associated token program")]
     #[account(9, name = "slot_hashes", desc = "Solana slot hashes sysvar")]
-    Initialize = 0, 
+    Initialize = 0,
 
     #[account(0, name = "stake_program", desc = "ORE stake program")]
     #[account(1, name = "signer", desc = "Signer", signer)]
     #[account(2, name = "delegate", desc = "ORE stake delegate account", writable)]
     #[account(3, name = "stake", desc = "ORE stake account")]
     #[account(4, name = "system_program", desc = "Solana system program")]
-    Open = 1, 
+    Open = 1,
 
     #[account(0, name = "stake_program", desc = "ORE stake program")]
     #[account(1, name = "signer", desc = "Signer", signer)]
@@ -45,7 +45,7 @@ pub enum StakeInstruction {
     #[account(6, name = "stake_tokens", desc = "ORE stake escrow account", writable)]
     #[account(7, name = "treasury_tokens", desc = "ORE treasury token account", writable)]
     #[account(8, name = "token_program", desc = "SPL token program")]
-    Delegate = 2, 
+    Delegate = 2,
 
     #[account(0, name = "stake_program", desc = "ORE stake program")]
     #[account(1, name = "signer", desc = "Signer", signer)]
@@ -56,9 +56,15 @@ pub enum StakeInstruction {
     #[account(6, name = "stake_tokens", desc = "ORE stake escrow account", writable)]
     #[account(7, name = "treasury_tokens", desc = "ORE treasury token account", writable)]
     #[account(8, name = "token_program", desc = "SPL token program")]
-    Withdraw = 3
+    Withdraw = 3,
 
-    // TODO Close delegate account
+    #[account(0, name = "stake_program", desc = "ORE stake program")]
+    #[account(1, name = "signer", desc = "Signer", signer)]
+    #[account(2, name = "delegate", desc = "ORE stake delegate account", writable)]
+    #[account(3, name = "stake", desc = "ORE stake account")]
+    #[account(4, name = "system_program", desc = "Solana system program")]
+    Close = 4,
+
     // TODO Update stake account
 }
 

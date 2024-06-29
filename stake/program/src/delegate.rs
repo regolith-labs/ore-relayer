@@ -7,7 +7,6 @@ use ore_stake_api::{
 };
 use solana_program::{
     account_info::AccountInfo, entrypoint::ProgramResult, program_error::ProgramError,
-    pubkey::Pubkey,
 };
 
 use crate::utils::AccountDeserialize;
@@ -18,7 +17,6 @@ use crate::utils::AccountDeserialize;
 
 /// Delegates ORE to a stake account.
 pub fn process_delegate<'a, 'info>(
-    _program_id: &Pubkey,
     accounts: &'a [AccountInfo<'info>],
     data: &[u8],
 ) -> ProgramResult {

@@ -41,11 +41,7 @@ use crate::utils::AccountDeserialize;
 /// - Can only succeed if the provided hash satisfies the minimum difficulty requirement.
 /// - The the provided proof account must be associated with the signer.
 /// - The provided bus, config, noise, stake, and slot hash sysvar must be valid.
-pub fn process_mine<'a, 'info>(
-    _program_id: &Pubkey,
-    accounts: &'a [AccountInfo<'info>],
-    data: &[u8],
-) -> ProgramResult {
+pub fn process_mine<'a, 'info>(accounts: &'a [AccountInfo<'info>], data: &[u8]) -> ProgramResult {
     // Parse args
     let args = MineArgs::try_from_bytes(data)?;
 

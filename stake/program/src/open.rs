@@ -3,17 +3,13 @@ use std::mem::size_of;
 use ore_stake_api::{consts::*, instruction::OpenArgs, loaders::*, state::Delegate};
 use solana_program::{
     account_info::AccountInfo, entrypoint::ProgramResult, program_error::ProgramError,
-    pubkey::Pubkey, system_program,
+    system_program,
 };
 
 use crate::utils::{create_pda, AccountDeserialize, Discriminator};
 
 /// Opens a new delegate account.
-pub fn process_open<'a, 'info>(
-    _program_id: &Pubkey,
-    accounts: &'a [AccountInfo<'info>],
-    data: &[u8],
-) -> ProgramResult {
+pub fn process_open<'a, 'info>(accounts: &'a [AccountInfo<'info>], data: &[u8]) -> ProgramResult {
     // Parse args.
     let args = OpenArgs::try_from_bytes(data)?;
 

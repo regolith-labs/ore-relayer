@@ -1,8 +1,10 @@
+mod close;
 mod delegate;
 mod initialize;
 mod open;
 mod withdraw;
 
+use close::*;
 use delegate::*;
 use initialize::*;
 use open::*;
@@ -33,10 +35,11 @@ pub fn process_instruction(
         .ok_or(ProgramError::InvalidInstructionData)?;
 
     match StakeInstruction::try_from(*tag).or(Err(ProgramError::InvalidInstructionData))? {
-        StakeInstruction::Initialize => process_initialize(program_id, accounts, data)?,
-        StakeInstruction::Open => process_open(program_id, accounts, data)?,
-        StakeInstruction::Delegate => process_delegate(program_id, accounts, data)?,
-        StakeInstruction::Withdraw => process_withdraw(program_id, accounts, data)?,
+        StakeInstruction::Initialize => process_initialize(accounts, data)?,
+        StakeInstruction::Open => process_open(accounts, data)?,
+        StakeInstruction::Delegate => process_delegate(accounts, data)?,
+        StakeInstruction::Withdraw => process_withdraw(accounts, data)?,
+        StakeInstruction::Close => process_close(accounts, data)?,
     }
 
     Ok(())
