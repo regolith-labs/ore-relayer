@@ -29,12 +29,12 @@ pub enum StakeInstruction {
     #[account(9, name = "slot_hashes", desc = "Solana slot hashes sysvar")]
     Initialize = 0,
 
-    #[account(0, name = "stake_program", desc = "ORE stake program")]
-    #[account(1, name = "signer", desc = "Signer", signer)]
-    #[account(2, name = "delegate", desc = "ORE stake delegate account", writable)]
-    #[account(3, name = "pool", desc = "ORE pool account")]
-    #[account(4, name = "system_program", desc = "Solana system program")]
-    Open = 1,
+    // #[account(0, name = "stake_program", desc = "ORE stake program")]
+    // #[account(1, name = "signer", desc = "Signer", signer)]
+    // #[account(2, name = "delegate", desc = "ORE stake delegate account", writable)]
+    // #[account(3, name = "pool", desc = "ORE pool account")]
+    // #[account(4, name = "system_program", desc = "Solana system program")]
+    // Open = 1,
 
     #[account(0, name = "stake_program", desc = "ORE stake program")]
     #[account(1, name = "signer", desc = "Signer", signer)]
@@ -45,7 +45,7 @@ pub enum StakeInstruction {
     #[account(6, name = "sender", desc = "Signer token account", writable)]
     #[account(7, name = "treasury_tokens", desc = "ORE treasury token account", writable)]
     #[account(8, name = "token_program", desc = "SPL token program")]
-    Delegate = 2,
+    Delegate = 2, // TODO Rename to Stake
 
     #[account(0, name = "stake_program", desc = "ORE stake program")]
     #[account(1, name = "signer", desc = "Signer", signer)]
@@ -56,14 +56,14 @@ pub enum StakeInstruction {
     #[account(6, name = "proof", desc = "ORE proof account", writable)]
     #[account(7, name = "treasury_tokens", desc = "ORE treasury token account", writable)]
     #[account(8, name = "token_program", desc = "SPL token program")]
-    Withdraw = 3,
+    Withdraw = 3, // TODO Rename to Unstake
 
-    #[account(0, name = "stake_program", desc = "ORE stake program")]
-    #[account(1, name = "signer", desc = "Signer", signer)]
-    #[account(2, name = "delegate", desc = "ORE stake delegate account", writable)]
-    #[account(3, name = "pool", desc = "ORE pool account")]
-    #[account(4, name = "system_program", desc = "Solana system program")]
-    Close = 4,
+    // #[account(0, name = "stake_program", desc = "ORE stake program")]
+    // #[account(1, name = "signer", desc = "Signer", signer)]
+    // #[account(2, name = "delegate", desc = "ORE stake delegate account", writable)]
+    // #[account(3, name = "pool", desc = "ORE pool account")]
+    // #[account(4, name = "system_program", desc = "Solana system program")]
+    // Close = 4,
 
     // TODO Update stake account
 }
@@ -81,11 +81,11 @@ pub struct InitializeArgs {
     pub pool_bump: u8,
 }
 
-#[repr(C)]
-#[derive(Clone, Copy, Debug, Pod, Zeroable)]
-pub struct OpenArgs {
-    pub bump: u8,
-}
+// #[repr(C)]
+// #[derive(Clone, Copy, Debug, Pod, Zeroable)]
+// pub struct OpenArgs {
+//     pub bump: u8,
+// }
 
 #[repr(C)]
 #[derive(Clone, Copy, Debug, Pod, Zeroable)]
@@ -99,16 +99,17 @@ pub struct WithdrawArgs {
     pub amount: u64,
 }
 
-impl_to_bytes!(OpenArgs);
+// impl_to_bytes!(OpenArgs);
 impl_to_bytes!(DelegateArgs);
 impl_to_bytes!(InitializeArgs);
 impl_to_bytes!(WithdrawArgs);
 
-impl_instruction_from_bytes!(OpenArgs);
+// impl_instruction_from_bytes!(OpenArgs);
 impl_instruction_from_bytes!(DelegateArgs);
 impl_instruction_from_bytes!(InitializeArgs);
 impl_instruction_from_bytes!(WithdrawArgs);
 
+// TODO Add in rest of the accounts
 /// Builds an initialize instruction.
 pub fn initialize(signer: Pubkey) -> Instruction {
     let pool_pda = Pubkey::find_program_address(&[POOL, signer.as_ref()], &crate::id());
@@ -123,7 +124,7 @@ pub fn initialize(signer: Pubkey) -> Instruction {
             AccountMeta::new_readonly(sysvar::slot_hashes::id(), false),
         ],
         data: [
-            StakeInstruction::Open.to_vec(),
+            StakeInstruction::Initialize.to_vec(),
             InitializeArgs {
                 pool_bump: pool_pda.1,
                 proof_bump: proof_pda.1,

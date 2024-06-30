@@ -3,13 +3,7 @@ use ore_api::{
     loaders::load_proof,
     state::Proof,
 };
-use ore_stake_api::{
-    consts::POOL,
-    error::StakeError,
-    instruction::WithdrawArgs,
-    loaders::*,
-    state::{Delegate, Pool},
-};
+use ore_stake_api::{consts::POOL, instruction::WithdrawArgs, loaders::*, state::Pool};
 use solana_program::{
     account_info::AccountInfo, entrypoint::ProgramResult, program_error::ProgramError,
 };
@@ -25,14 +19,14 @@ pub fn process_withdraw<'a, 'info>(
     let args = WithdrawArgs::try_from_bytes(data)?;
 
     // Load accounts.
-    let [signer, beneficiary_info, delegate_info, pool_info, pool_tokens_info, proof_info, treasury_tokens_info, token_program] =
+    let [signer, beneficiary_info, pool_info, pool_tokens_info, proof_info, treasury_tokens_info, token_program] =
         accounts
     else {
         return Err(ProgramError::NotEnoughAccountKeys);
     };
     load_signer(signer)?;
     load_token_account(beneficiary_info, None, &MINT_ADDRESS, true)?;
-    load_delegate(delegate_info, *signer.key, *pool_info.key, true)?;
+    // load_delegate(delegate_info, *signer.key, *pool_info.key, true)?;
     load_any_pool(pool_info, true)?;
     load_token_account(pool_tokens_info, Some(pool_info.key), &MINT_ADDRESS, true)?;
     load_proof(proof_info, pool_info.key, true)?;
@@ -45,11 +39,11 @@ pub fn process_withdraw<'a, 'info>(
     load_program(token_program, spl_token::id())?;
 
     // Error if withdraw amount is too large.
-    let mut delegate_data = delegate_info.data.borrow_mut();
-    let delegate = Delegate::try_from_bytes_mut(&mut delegate_data)?;
-    if args.amount.gt(&delegate.balance) {
-        return Err(StakeError::Dummy.into());
-    }
+    // let mut delegate_data = delegate_info.data.borrow_mut();
+    // let delegate = Delegate::try_from_bytes_mut(&mut delegate_data)?;
+    // if args.amount.gt(&delegate.balance) {
+    //     return Err(StakeError::Dummy.into());
+    // }
 
     // Calculate claim amount and update balances.
     let mut pool_data = pool_info.data.borrow_mut();
@@ -60,7 +54,7 @@ pub fn process_withdraw<'a, 'info>(
         .balance
         .saturating_mul(args.amount)
         .saturating_div(pool.balance);
-    delegate.balance = delegate.balance.saturating_sub(args.amount);
+    // delegate.balance = delegate.balance.saturating_sub(args.amount);
     pool.balance = pool.balance.saturating_sub(args.amount);
 
     // Claim ORE stake from core contract.

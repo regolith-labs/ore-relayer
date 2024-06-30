@@ -12,6 +12,10 @@ use solana_program::{
 
 use crate::utils::{create_pda, AccountDeserialize, Discriminator};
 
+// TODO Create a new mint for this Pool account
+// TODO Create metadata for the token
+// TODO Delegate mint authority to the pool authority
+
 /// Initializes a new stake account.
 pub fn process_initialize<'a, 'info>(
     accounts: &'a [AccountInfo<'info>],

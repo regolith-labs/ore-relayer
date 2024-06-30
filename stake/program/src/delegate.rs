@@ -1,10 +1,5 @@
 use ore_api::{consts::MINT_ADDRESS, loaders::*};
-use ore_stake_api::{
-    consts::*,
-    instruction::DelegateArgs,
-    loaders::*,
-    state::{Delegate, Pool},
-};
+use ore_stake_api::{consts::*, instruction::DelegateArgs, loaders::*, state::Pool};
 use solana_program::{
     account_info::AccountInfo, entrypoint::ProgramResult, program_error::ProgramError,
 };
@@ -24,23 +19,22 @@ pub fn process_delegate<'a, 'info>(
     let args = DelegateArgs::try_from_bytes(data)?;
 
     // Load accounts.
-    let [signer, delegate_info, pool_info, pool_tokens_info, proof_info, sender_info, treasury_tokens_info, token_program] =
+    let [signer, pool_info, pool_tokens_info, proof_info, sender_info, treasury_tokens_info, token_program] =
         accounts
     else {
         return Err(ProgramError::NotEnoughAccountKeys);
     };
     load_signer(signer)?;
-    load_delegate(delegate_info, *signer.key, *pool_info.key, true)?;
     load_token_account(sender_info, Some(signer.key), &MINT_ADDRESS, true)?;
     load_any_pool(pool_info, true)?;
     load_token_account(pool_tokens_info, Some(pool_info.key), &MINT_ADDRESS, true)?;
 
     // Update balances.
-    let mut delegate_data = delegate_info.data.borrow_mut();
-    let delegate = Delegate::try_from_bytes_mut(&mut delegate_data)?;
+    // let mut delegate_data = delegate_info.data.borrow_mut();
+    // let delegate = Delegate::try_from_bytes_mut(&mut delegate_data)?;
     let mut pool_data = pool_info.data.borrow_mut();
     let pool = Pool::try_from_bytes_mut(&mut pool_data)?;
-    delegate.balance = delegate.balance.saturating_add(args.amount);
+    // delegate.balance = delegate.balance.saturating_add(args.amount);
     pool.balance = pool.balance.saturating_add(args.amount);
 
     // Transfer tokens from sender to escrow account.
