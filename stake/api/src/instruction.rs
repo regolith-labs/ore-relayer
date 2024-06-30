@@ -29,13 +29,6 @@ pub enum StakeInstruction {
     #[account(9, name = "slot_hashes", desc = "Solana slot hashes sysvar")]
     Initialize = 0,
 
-    // #[account(0, name = "stake_program", desc = "ORE stake program")]
-    // #[account(1, name = "signer", desc = "Signer", signer)]
-    // #[account(2, name = "delegate", desc = "ORE stake delegate account", writable)]
-    // #[account(3, name = "pool", desc = "ORE pool account")]
-    // #[account(4, name = "system_program", desc = "Solana system program")]
-    // Open = 1,
-
     #[account(0, name = "stake_program", desc = "ORE stake program")]
     #[account(1, name = "signer", desc = "Signer", signer)]
     #[account(2, name = "delegate", desc = "ORE stake delegate account", writable)]
@@ -58,14 +51,7 @@ pub enum StakeInstruction {
     #[account(8, name = "token_program", desc = "SPL token program")]
     Withdraw = 3, // TODO Rename to Unstake
 
-    // #[account(0, name = "stake_program", desc = "ORE stake program")]
-    // #[account(1, name = "signer", desc = "Signer", signer)]
-    // #[account(2, name = "delegate", desc = "ORE stake delegate account", writable)]
-    // #[account(3, name = "pool", desc = "ORE pool account")]
-    // #[account(4, name = "system_program", desc = "Solana system program")]
-    // Close = 4,
-
-    // TODO Update stake account
+    // TODO Update pool account
 }
 
 impl StakeInstruction {
@@ -77,15 +63,10 @@ impl StakeInstruction {
 #[repr(C)]
 #[derive(Clone, Copy, Debug, Pod, Zeroable)]
 pub struct InitializeArgs {
+    pub mint_bump: u8,
     pub proof_bump: u8,
     pub pool_bump: u8,
 }
-
-// #[repr(C)]
-// #[derive(Clone, Copy, Debug, Pod, Zeroable)]
-// pub struct OpenArgs {
-//     pub bump: u8,
-// }
 
 #[repr(C)]
 #[derive(Clone, Copy, Debug, Pod, Zeroable)]
@@ -109,23 +90,33 @@ impl_instruction_from_bytes!(DelegateArgs);
 impl_instruction_from_bytes!(InitializeArgs);
 impl_instruction_from_bytes!(WithdrawArgs);
 
-// TODO Add in rest of the accounts
 /// Builds an initialize instruction.
-pub fn initialize(signer: Pubkey) -> Instruction {
+pub fn initialize(signer: Pubkey, miner: Pubkey) -> Instruction {
     let pool_pda = Pubkey::find_program_address(&[POOL, signer.as_ref()], &crate::id());
     let proof_pda = Pubkey::find_program_address(&[PROOF, pool_pda.0.as_ref()], &ore_api::id());
+    let mint_pda = Pubkey::find_program_address(&[MINT, pool_pda.0.as_ref()], &crate::id());
+    let pool_tokens_address =
+        spl_associated_token_account::get_associated_token_address(&pool_pda.0, &MINT_ADDRESS);
     Instruction {
         program_id: crate::id(),
         accounts: vec![
             AccountMeta::new(signer, true),
+            AccountMeta::new_readonly(miner, false),
+            AccountMeta::new(mint_pda.0, false),
+            AccountMeta::new_readonly(MINT_ADDRESS, false),
             AccountMeta::new(pool_pda.0, false),
+            AccountMeta::new(pool_tokens_address, false),
             AccountMeta::new(proof_pda.0, false),
             AccountMeta::new_readonly(system_program::id(), false),
+            AccountMeta::new_readonly(spl_token::id(), false),
+            AccountMeta::new_readonly(spl_associated_token_account::id(), false),
+            AccountMeta::new_readonly(sysvar::rent::id(), false),
             AccountMeta::new_readonly(sysvar::slot_hashes::id(), false),
         ],
         data: [
             StakeInstruction::Initialize.to_vec(),
             InitializeArgs {
+                mint_bump: mint_pda.1,
                 pool_bump: pool_pda.1,
                 proof_bump: proof_pda.1,
             }

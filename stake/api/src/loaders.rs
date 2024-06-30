@@ -1,4 +1,5 @@
-use solana_program::{account_info::AccountInfo, program_error::ProgramError};
+use ore_api::consts::MINT;
+use solana_program::{account_info::AccountInfo, program_error::ProgramError, pubkey::Pubkey};
 use utils::Discriminator;
 
 pub use crate::{state::*, utils::loaders::*};
@@ -29,4 +30,16 @@ pub fn load_any_pool<'a, 'info>(
     }
 
     Ok(())
+}
+
+/// Errors if:
+/// - Mint address is not expected.
+/// - Account is not a valid mint.
+pub fn load_pool_mint<'a, 'info>(
+    info: &'a AccountInfo<'info>,
+    pool: Pubkey,
+    is_writable: bool,
+) -> Result<(), ProgramError> {
+    let mint_pda = Pubkey::find_program_address(&[MINT, pool.as_ref()], &crate::id());
+    load_mint(info, mint_pda.0, is_writable)
 }

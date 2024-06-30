@@ -1,4 +1,7 @@
-use ore_api::{consts::MINT_ADDRESS, loaders::*};
+use ore_api::{
+    consts::{MINT_ADDRESS, TREASURY_ADDRESS},
+    loaders::*,
+};
 use ore_stake_api::{consts::*, instruction::DelegateArgs, loaders::*, state::Pool};
 use solana_program::{
     account_info::AccountInfo, entrypoint::ProgramResult, program_error::ProgramError,
@@ -19,22 +22,34 @@ pub fn process_delegate<'a, 'info>(
     let args = DelegateArgs::try_from_bytes(data)?;
 
     // Load accounts.
-    let [signer, pool_info, pool_tokens_info, proof_info, sender_info, treasury_tokens_info, token_program] =
+    let [signer, ore_mint_info, pool_info, pool_mint_info, pool_tokens_info, proof_info, sender_info, treasury_tokens_info, ore_program, token_program] =
         accounts
     else {
         return Err(ProgramError::NotEnoughAccountKeys);
     };
     load_signer(signer)?;
-    load_token_account(sender_info, Some(signer.key), &MINT_ADDRESS, true)?;
+    load_mint(ore_mint_info, MINT_ADDRESS, true)?;
     load_any_pool(pool_info, true)?;
+    load_pool_mint(pool_mint_info, *pool_info.key, true)?;
     load_token_account(pool_tokens_info, Some(pool_info.key), &MINT_ADDRESS, true)?;
+    load_proof(proof_info, pool_info.key, true)?;
+    load_token_account(sender_info, Some(signer.key), &MINT_ADDRESS, true)?;
+    load_token_account(
+        treasury_tokens_info,
+        Some(&TREASURY_ADDRESS),
+        &MINT_ADDRESS,
+        true,
+    )?;
+    load_program(ore_program, ore_api::id())?;
+    load_program(token_program, spl_token::id())?;
+
+    // TODO If not accepting new stake, then error out
+    // TODO Calculate correct amount of pool tokens to mint to user.
+    // TODO Mint the correct amount.
 
     // Update balances.
-    // let mut delegate_data = delegate_info.data.borrow_mut();
-    // let delegate = Delegate::try_from_bytes_mut(&mut delegate_data)?;
     let mut pool_data = pool_info.data.borrow_mut();
     let pool = Pool::try_from_bytes_mut(&mut pool_data)?;
-    // delegate.balance = delegate.balance.saturating_add(args.amount);
     pool.balance = pool.balance.saturating_add(args.amount);
 
     // Transfer tokens from sender to escrow account.
@@ -67,12 +82,10 @@ pub fn process_delegate<'a, 'info>(
             pool_tokens_info.clone(),
             treasury_tokens_info.clone(),
             token_program.clone(),
+            ore_program.clone(),
         ],
         &[&[POOL, pool_authority.as_ref(), &[pool_bump]]],
     )?;
-
-    // TODO If not accepting new stake, then error out
-    // TODO If liquid, mint liquid tokens
 
     Ok(())
 }
