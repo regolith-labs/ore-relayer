@@ -45,7 +45,7 @@ pub fn load_delegate<'a, 'info>(
 /// - Data is empty.
 /// - Account discriminator is not a stake account.
 /// - Expected to be writable, but is not.
-pub fn load_any_stake<'a, 'info>(
+pub fn load_any_pool<'a, 'info>(
     info: &'a AccountInfo<'info>,
     is_writable: bool,
 ) -> Result<(), ProgramError> {
@@ -57,7 +57,7 @@ pub fn load_any_stake<'a, 'info>(
         return Err(ProgramError::UninitializedAccount);
     }
 
-    if info.data.borrow()[0].ne(&(Stake::discriminator() as u8)) {
+    if info.data.borrow()[0].ne(&(Pool::discriminator() as u8)) {
         return Err(solana_program::program_error::ProgramError::InvalidAccountData);
     }
 

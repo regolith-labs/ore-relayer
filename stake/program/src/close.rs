@@ -9,12 +9,12 @@ use crate::utils::AccountDeserialize;
 /// Closes a delegate account.
 pub fn process_close<'a, 'info>(accounts: &'a [AccountInfo<'info>], _data: &[u8]) -> ProgramResult {
     // Load accounts.
-    let [signer, delegate_info, stake_info, system_program] = accounts else {
+    let [signer, delegate_info, pool_info, system_program] = accounts else {
         return Err(ProgramError::NotEnoughAccountKeys);
     };
     load_signer(signer)?;
-    load_delegate(delegate_info, *signer.key, *stake_info.key, true)?;
-    load_any_stake(stake_info, false)?;
+    load_delegate(delegate_info, *signer.key, *pool_info.key, true)?;
+    load_any_pool(pool_info, false)?;
     load_program(system_program, system_program::id())?;
 
     // Error if delegate balance is non-zero.

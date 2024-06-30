@@ -1,8 +1,8 @@
 mod delegate;
-mod stake;
+mod pool;
 
 pub use delegate::*;
-pub use stake::*;
+pub use pool::*;
 
 use num_enum::{IntoPrimitive, TryFromPrimitive};
 
@@ -10,5 +10,5 @@ use num_enum::{IntoPrimitive, TryFromPrimitive};
 #[derive(Clone, Copy, Debug, Eq, PartialEq, IntoPrimitive, TryFromPrimitive)]
 pub enum AccountDiscriminator {
     Delegate = 100,
-    Stake = 101,
+    Pool = 101,
 }

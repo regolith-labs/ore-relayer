@@ -4,11 +4,11 @@ use ore_api::{
     state::Proof,
 };
 use ore_stake_api::{
-    consts::STAKE,
+    consts::POOL,
     error::StakeError,
     instruction::WithdrawArgs,
     loaders::*,
-    state::{Delegate, Stake},
+    state::{Delegate, Pool},
 };
 use solana_program::{
     account_info::AccountInfo, entrypoint::ProgramResult, program_error::ProgramError,
@@ -25,17 +25,17 @@ pub fn process_withdraw<'a, 'info>(
     let args = WithdrawArgs::try_from_bytes(data)?;
 
     // Load accounts.
-    let [signer, beneficiary_info, delegate_info, proof_info, stake_info, stake_tokens_info, treasury_tokens_info, token_program] =
+    let [signer, beneficiary_info, delegate_info, pool_info, pool_tokens_info, proof_info, treasury_tokens_info, token_program] =
         accounts
     else {
         return Err(ProgramError::NotEnoughAccountKeys);
     };
     load_signer(signer)?;
-    load_delegate(delegate_info, *signer.key, *stake_info.key, true)?;
     load_token_account(beneficiary_info, None, &MINT_ADDRESS, true)?;
-    load_proof(proof_info, stake_info.key, true)?;
-    load_any_stake(stake_info, true)?;
-    load_token_account(stake_tokens_info, Some(stake_info.key), &MINT_ADDRESS, true)?;
+    load_delegate(delegate_info, *signer.key, *pool_info.key, true)?;
+    load_any_pool(pool_info, true)?;
+    load_token_account(pool_tokens_info, Some(pool_info.key), &MINT_ADDRESS, true)?;
+    load_proof(proof_info, pool_info.key, true)?;
     load_token_account(
         treasury_tokens_info,
         Some(&TREASURY_ADDRESS),
@@ -52,32 +52,32 @@ pub fn process_withdraw<'a, 'info>(
     }
 
     // Calculate claim amount and update balances.
-    let mut stake_data = stake_info.data.borrow_mut();
-    let stake = Stake::try_from_bytes_mut(&mut stake_data)?;
+    let mut pool_data = pool_info.data.borrow_mut();
+    let pool = Pool::try_from_bytes_mut(&mut pool_data)?;
     let proof_data = proof_info.data.borrow();
     let proof = Proof::try_from_bytes(&proof_data)?;
     let claim_amount = proof
         .balance
         .saturating_mul(args.amount)
-        .saturating_div(stake.balance);
+        .saturating_div(pool.balance);
     delegate.balance = delegate.balance.saturating_sub(args.amount);
-    stake.balance = stake.balance.saturating_sub(args.amount);
+    pool.balance = pool.balance.saturating_sub(args.amount);
 
     // Claim ORE stake from core contract.
-    let stake_bump = stake.bump as u8;
-    let stake_authority = stake.authority;
+    let pool_bump = pool.bump as u8;
+    let pool_authority = pool.authority;
     drop(proof_data);
-    drop(stake_data);
+    drop(pool_data);
     solana_program::program::invoke_signed(
-        &ore_api::instruction::claim(*stake_info.key, *beneficiary_info.key, claim_amount),
+        &ore_api::instruction::claim(*pool_info.key, *beneficiary_info.key, claim_amount),
         &[
-            stake_info.clone(),
+            pool_info.clone(),
             proof_info.clone(),
-            stake_tokens_info.clone(),
+            pool_tokens_info.clone(),
             treasury_tokens_info.clone(),
             token_program.clone(),
         ],
-        &[&[STAKE, stake_authority.as_ref(), &[stake_bump]]],
+        &[&[POOL, pool_authority.as_ref(), &[pool_bump]]],
     )?;
 
     // TODO If liquid, burn liquid tokens
