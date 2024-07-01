@@ -59,7 +59,7 @@ pub fn process_delegate<'a, 'info>(
     let proof = Proof::try_from_bytes(&proof_data)?;
     let pool_mint_data = pool_mint_info.data.borrow();
     let pool_mint = Mint::unpack(&pool_mint_data).expect("Failed to parse mint");
-    let amount_to_mint = if pool_mint.supply.eq(&0) || proof.balance.eq(&0) {
+    let mint_amount = if pool_mint.supply.eq(&0) || proof.balance.eq(&0) {
         args.amount
     } else {
         pool_mint
@@ -112,7 +112,7 @@ pub fn process_delegate<'a, 'info>(
             recipient_info.key,
             signer.key,
             &[pool_info.key],
-            amount_to_mint,
+            mint_amount,
         )?,
         &[
             token_program.clone(),
