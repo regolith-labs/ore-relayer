@@ -14,7 +14,7 @@ use spl_token::state::Mint;
 
 use crate::utils::AccountDeserialize;
 
-/// Delegates ORE to a stake account.
+/// Delegates ORE to a pool account.
 pub fn process_delegate<'a, 'info>(
     accounts: &'a [AccountInfo<'info>],
     data: &[u8],

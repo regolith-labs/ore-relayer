@@ -7,7 +7,7 @@ use crate::utils::{impl_account_from_bytes, impl_to_bytes, Discriminator};
 use super::AccountDiscriminator;
 
 // TODO Authorized depositors?
-// TODO Commission
+// TODO Commission?
 
 /// Pool accounts can receive ORE deposits from delegators to stake in the mining protocol for a rewards multiplier.
 #[repr(C)]
@@ -19,7 +19,7 @@ pub struct Pool {
     /// The account bump used for signing CPIs.
     pub bump: u64,
 
-    /// Flag indicating whether or not this stake account is accepting new deposits.
+    /// Flag indicating whether or not this pool is accepting new deposits.
     pub is_open: u64,
 }
 
