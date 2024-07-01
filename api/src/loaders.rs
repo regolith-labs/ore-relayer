@@ -2,7 +2,8 @@ use ore_api::consts::MINT;
 use solana_program::{account_info::AccountInfo, program_error::ProgramError, pubkey::Pubkey};
 use utils::Discriminator;
 
-pub use crate::{state::*, utils::loaders::*};
+pub use crate::state::*;
+pub use ore_api::loaders::*;
 
 /// Errors if:
 /// - Owner is not ORE stake program.

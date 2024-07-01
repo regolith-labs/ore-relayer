@@ -1,9 +1,8 @@
 use ore_api::{
     consts::{MINT_ADDRESS, TREASURY_ADDRESS},
-    loaders::*,
     state::Proof,
 };
-use ore_stake_api::{
+use ore_relayer_api::{
     consts::*, error::StakeError, instruction::DelegateArgs, loaders::*, state::Pool,
 };
 use solana_program::{
@@ -11,8 +10,7 @@ use solana_program::{
     program_pack::Pack,
 };
 use spl_token::state::Mint;
-
-use crate::utils::AccountDeserialize;
+use utils::AccountDeserialize;
 
 /// Delegates ORE to a pool account.
 pub fn process_delegate<'a, 'info>(

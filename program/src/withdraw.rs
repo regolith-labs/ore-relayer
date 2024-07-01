@@ -3,7 +3,7 @@ use ore_api::{
     loaders::load_proof,
     state::Proof,
 };
-use ore_stake_api::{consts::POOL, instruction::WithdrawArgs, loaders::*, state::Pool};
+use ore_relayer_api::{consts::POOL, instruction::WithdrawArgs, loaders::*, state::Pool};
 use solana_program::{
     account_info::AccountInfo, entrypoint::ProgramResult, program_error::ProgramError,
     program_pack::Pack,

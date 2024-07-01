@@ -1314,7 +1314,7 @@ checksum = "624a8340c38c1b80fd549087862da4ba43e08858af025b236e509b6649fc13d5"
 [[package]]
 name = "ore-api"
 version = "2.0.0"
-source = "git+https://github.com/regolith-labs/ore?branch=master#d53f76c63957621b06b6fd964392304cf7cf4c5b"
+source = "git+https://github.com/regolith-labs/ore?rev=b55b6d3#b55b6d338dfa0f4f2027c480c10d552a7e9caffa"
 dependencies = [
  "array-const-fn-init",
  "bytemuck",
@@ -1328,11 +1328,11 @@ dependencies = [
  "spl-token",
  "static_assertions",
  "thiserror",
- "utils 2.0.0 (git+https://github.com/regolith-labs/ore?branch=master)",
+ "utils",
 ]
 
 [[package]]
-name = "ore-stake-api"
+name = "ore-relayer-api"
 version = "2.0.0"
 dependencies = [
  "bytemuck",
@@ -1345,20 +1345,20 @@ dependencies = [
  "spl-token",
  "static_assertions",
  "thiserror",
- "utils 2.0.0",
+ "utils",
 ]
 
 [[package]]
-name = "ore-stake-program"
+name = "ore-relayer-program"
 version = "2.0.0"
 dependencies = [
  "mpl-token-metadata",
  "ore-api",
- "ore-stake-api",
+ "ore-relayer-api",
  "solana-program",
  "spl-associated-token-account",
  "spl-token",
- "utils 2.0.0",
+ "utils",
 ]
 
 [[package]]
@@ -2518,16 +2518,7 @@ dependencies = [
 [[package]]
 name = "utils"
 version = "2.0.0"
-dependencies = [
- "bytemuck",
- "solana-program",
- "spl-token",
-]
-
-[[package]]
-name = "utils"
-version = "2.0.0"
-source = "git+https://github.com/regolith-labs/ore?branch=master#d53f76c63957621b06b6fd964392304cf7cf4c5b"
+source = "git+https://github.com/regolith-labs/ore?rev=b55b6d3#b55b6d338dfa0f4f2027c480c10d552a7e9caffa"
 dependencies = [
  "bytemuck",
  "solana-program",

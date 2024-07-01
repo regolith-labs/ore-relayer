@@ -1,29 +1,23 @@
 [package]
-name = "ore-stake-program"
-description = "A liquid staking program for ORE miners"
+name = "ore-relayer-api"
+description = "API for interacting with the ORE relayer program"
 version.workspace = true
 edition.workspace = true
 license.workspace = true
 homepage.workspace = true
 documentation.workspace = true
 repository.workspace = true
-readme.workspace = true
 keywords.workspace = true
 
-[lib]
-crate-type = ["cdylib", "lib"]
-name = "ore_stake"
-
-[features]
-no-entrypoint = []
-default = []
-
 [dependencies]
+bytemuck.workspace = true
 mpl-token-metadata.workspace = true
+num_enum.workspace = true
 ore-api.workspace = true
-ore-stake-api = { path = "../api" }
+shank.workspace = true
 solana-program.workspace = true
 spl-token.workspace = true
 spl-associated-token-account.workspace = true
+static_assertions.workspace = true
+thiserror.workspace = true
 utils.workspace = true
-

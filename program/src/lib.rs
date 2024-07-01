@@ -6,7 +6,7 @@ use delegate::*;
 use initialize::*;
 use withdraw::*;
 
-use ore_stake_api::instruction::*;
+use ore_relayer_api::instruction::*;
 use solana_program::{
     self, account_info::AccountInfo, entrypoint::ProgramResult, program_error::ProgramError,
     pubkey::Pubkey,
@@ -22,7 +22,7 @@ pub fn process_instruction(
     accounts: &[AccountInfo],
     data: &[u8],
 ) -> ProgramResult {
-    if program_id.ne(&ore_stake_api::id()) {
+    if program_id.ne(&ore_relayer_api::id()) {
         return Err(ProgramError::IncorrectProgramId);
     }
 

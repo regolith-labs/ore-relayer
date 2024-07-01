@@ -1,8 +1,7 @@
 use bytemuck::{Pod, Zeroable};
 use shank::ShankAccount;
 use solana_program::pubkey::Pubkey;
-
-use crate::utils::{impl_account_from_bytes, impl_to_bytes, Discriminator};
+use utils::{impl_account_from_bytes, impl_to_bytes, Discriminator};
 
 use super::AccountDiscriminator;
 

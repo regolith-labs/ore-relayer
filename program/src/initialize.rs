@@ -1,7 +1,7 @@
 use std::mem::size_of;
 
 use ore_api::consts::*;
-use ore_stake_api::{consts::*, instruction::InitializeArgs, loaders::*, state::Pool};
+use ore_relayer_api::{consts::*, instruction::InitializeArgs, loaders::*, state::Pool};
 use solana_program::{
     account_info::AccountInfo,
     entrypoint::ProgramResult,
@@ -45,7 +45,7 @@ pub fn process_initialize<'a, 'info>(
         pool_mint_info,
         &[MINT, pool_info.key.as_ref()],
         args.mint_bump,
-        &ore_stake_api::id(),
+        &ore_relayer_api::id(),
     )?;
     load_system_account(pool_tokens_info, true)?;
     load_uninitialized_pda(
@@ -62,7 +62,7 @@ pub fn process_initialize<'a, 'info>(
     // Initialize the stake account.
     create_pda(
         pool_info,
-        &ore_stake_api::id(),
+        &ore_relayer_api::id(),
         8 + size_of::<Pool>(),
         &[POOL, signer.key.as_ref(), &[args.pool_bump]],
         system_program,
