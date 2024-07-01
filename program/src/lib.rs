@@ -1,18 +1,12 @@
-mod delegate;
-mod initialize;
-mod withdraw;
+mod open;
 
-use delegate::*;
-use initialize::*;
-use withdraw::*;
+use open::*;
 
-use ore_relayer_api::instruction::*;
+use ore_relay_api::instruction::*;
 use solana_program::{
     self, account_info::AccountInfo, entrypoint::ProgramResult, program_error::ProgramError,
     pubkey::Pubkey,
 };
-
-pub(crate) use utils;
 
 #[cfg(not(feature = "no-entrypoint"))]
 solana_program::entrypoint!(process_instruction);
@@ -22,7 +16,7 @@ pub fn process_instruction(
     accounts: &[AccountInfo],
     data: &[u8],
 ) -> ProgramResult {
-    if program_id.ne(&ore_relayer_api::id()) {
+    if program_id.ne(&ore_relay_api::id()) {
         return Err(ProgramError::IncorrectProgramId);
     }
 
@@ -30,10 +24,8 @@ pub fn process_instruction(
         .split_first()
         .ok_or(ProgramError::InvalidInstructionData)?;
 
-    match StakeInstruction::try_from(*tag).or(Err(ProgramError::InvalidInstructionData))? {
-        StakeInstruction::Initialize => process_initialize(accounts, data)?,
-        StakeInstruction::Delegate => process_delegate(accounts, data)?,
-        StakeInstruction::Withdraw => process_withdraw(accounts, data)?,
+    match RelayInstruction::try_from(*tag).or(Err(ProgramError::InvalidInstructionData))? {
+        RelayInstruction::Open => process_open(accounts, data)?,
     }
 
     Ok(())

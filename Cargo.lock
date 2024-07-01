@@ -1332,7 +1332,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "ore-relayer-api"
+name = "ore-relay-api"
 version = "2.0.0"
 dependencies = [
  "bytemuck",
@@ -1354,7 +1354,7 @@ version = "2.0.0"
 dependencies = [
  "mpl-token-metadata",
  "ore-api",
- "ore-relayer-api",
+ "ore-relay-api",
  "solana-program",
  "spl-associated-token-account",
  "spl-token",
