@@ -37,7 +37,7 @@ pub fn load_any_pool<'a, 'info>(
 /// - Account is not a valid mint.
 pub fn load_pool_mint<'a, 'info>(
     info: &'a AccountInfo<'info>,
-    pool: Pubkey,
+    pool: &Pubkey,
     is_writable: bool,
 ) -> Result<(), ProgramError> {
     let mint_pda = Pubkey::find_program_address(&[MINT, pool.as_ref()], &crate::id());

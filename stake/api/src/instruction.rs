@@ -64,8 +64,8 @@ impl StakeInstruction {
 #[derive(Clone, Copy, Debug, Pod, Zeroable)]
 pub struct InitializeArgs {
     pub mint_bump: u8,
-    pub proof_bump: u8,
     pub pool_bump: u8,
+    pub proof_bump: u8,
 }
 
 #[repr(C)]
