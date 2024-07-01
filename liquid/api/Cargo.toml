@@ -1,6 +1,6 @@
 [package]
-name = "ore-api"
-description = "API for interacting with the ORE program"
+name = "ore-stake-api"
+description = "API for interacting with the ORE staking program"
 version.workspace = true
 edition.workspace = true
 license.workspace = true
@@ -10,12 +10,10 @@ repository.workspace = true
 keywords.workspace = true
 
 [dependencies]
-array-const-fn-init.workspace = true
 bytemuck.workspace = true
-const-crypto.workspace = true
-drillx.workspace = true
 mpl-token-metadata.workspace = true
 num_enum.workspace = true
+ore-api.workspace = true
 shank.workspace = true
 solana-program.workspace = true
 spl-token.workspace = true

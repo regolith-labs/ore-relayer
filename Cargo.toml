@@ -1,6 +1,6 @@
 [workspace]
 resolver = "2"
-members = ["core/*", "stake/*", "utils"]
+members = ["liquid/*", "utils"]
 
 [workspace.package]
 version = "2.0.0"
@@ -19,6 +19,7 @@ const-crypto = "0.1.0"
 drillx = { git = "https://github.com/regolith-labs/drillx", branch = "master", features = ["solana"] }
 mpl-token-metadata = "4.1.2"
 num_enum = "0.7.2"
+ore-api = { git = "https://github.com/regolith-labs/ore", branch = "master" }
 shank = "0.3.0"
 solana-program = "1.18"
 spl-token = { version = "^4", features = ["no-entrypoint"] }
