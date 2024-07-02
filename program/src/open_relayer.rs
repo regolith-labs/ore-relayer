@@ -1,6 +1,8 @@
 use std::mem::size_of;
 
-use ore_relay_api::{consts::*, instruction::OpenRelayerArgs, loaders::*, state::Relayer};
+use ore_relay_api::{
+    consts::*, error::RelayError, instruction::OpenRelayerArgs, loaders::*, state::Relayer,
+};
 use solana_program::{
     account_info::AccountInfo, entrypoint::ProgramResult, program_error::ProgramError,
     system_program,
@@ -27,6 +29,11 @@ pub fn process_open_relayer<'a, 'info>(
         &ore_relay_api::id(),
     )?;
     load_program(system_program, system_program::id())?;
+
+    // Error if non-authorized party tries to create a relayer.
+    if signer.key.ne(&AUTHORIZED_RELAYER) {
+        return Err(RelayError::Dummy.into());
+    }
 
     // Initialize relay account.
     create_pda(

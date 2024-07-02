@@ -6,13 +6,13 @@ use thiserror::Error;
 
 #[derive(Debug, Error, Clone, Copy, PartialEq, Eq, IntoPrimitive)]
 #[repr(u32)]
-pub enum StakeError {
+pub enum RelayError {
     #[error("This is a placeholder error")]
     Dummy = 0,
 }
 
-impl From<StakeError> for ProgramError {
-    fn from(e: StakeError) -> Self {
+impl From<RelayError> for ProgramError {
+    fn from(e: RelayError) -> Self {
         ProgramError::Custom(e as u32)
     }
 }

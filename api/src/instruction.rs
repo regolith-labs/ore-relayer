@@ -71,8 +71,17 @@ pub enum RelayInstruction {
     #[account(9, name = "token_program", desc = "SPL token program")]
     Collect = 101, 
 
+    // TODO UpdateMiner
+    UpdateMiner = 102, 
+
     // TODO UpdateRelayer
-    UpdateRelayer = 102,
+    UpdateRelayer = 103,
+}
+
+#[repr(C)]
+#[derive(Clone, Copy, Debug, Pod, Zeroable)]
+pub struct ClaimArgs {
+    pub amount: u64,
 }
 
 #[repr(C)]
@@ -94,27 +103,21 @@ pub struct StakeArgs {
     pub amount: u64,
 }
 
-#[repr(C)]
-#[derive(Clone, Copy, Debug, Pod, Zeroable)]
-pub struct ClaimArgs {
-    pub amount: u64,
-}
-
 impl RelayInstruction {
     pub fn to_vec(&self) -> Vec<u8> {
         vec![*self as u8]
     }
 }
 
+impl_to_bytes!(ClaimArgs);
 impl_to_bytes!(OpenEscrowArgs);
 impl_to_bytes!(OpenRelayerArgs);
 impl_to_bytes!(StakeArgs);
-impl_to_bytes!(ClaimArgs);
 
+impl_instruction_from_bytes!(ClaimArgs);
 impl_instruction_from_bytes!(OpenEscrowArgs);
 impl_instruction_from_bytes!(OpenRelayerArgs);
 impl_instruction_from_bytes!(StakeArgs);
-impl_instruction_from_bytes!(ClaimArgs);
 
 // Builds an open_escrow instruction.
 pub fn open_escrow(signer: Pubkey, miner: Pubkey, relayer: Pubkey) -> Instruction {
