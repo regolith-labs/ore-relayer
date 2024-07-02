@@ -3,12 +3,14 @@ mod collect;
 mod open_escrow;
 mod open_relayer;
 mod stake;
+mod update_miner;
 
 use claim::*;
 use collect::*;
 use open_escrow::*;
 use open_relayer::*;
 use stake::*;
+use update_miner::*;
 
 use ore_relay_api::instruction::*;
 use solana_program::{
@@ -41,6 +43,7 @@ pub fn process_instruction(
         // Relayer ixs
         RelayInstruction::OpenRelayer => process_open_relayer(accounts, data)?,
         RelayInstruction::Collect => process_collect(accounts, data)?,
+        RelayInstruction::UpdateMiner => process_update_miner(accounts, data)?,
 
         _ => {}
     }
