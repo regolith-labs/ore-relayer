@@ -5,28 +5,25 @@ use utils::{impl_account_from_bytes, impl_to_bytes, Discriminator};
 
 use super::AccountDiscriminator;
 
-// TODO Authorized depositors?
-// TODO Commission?
-
-/// Relay accounts can receive ORE deposits from delegators to stake in the mining protocol for a rewards multiplier.
+/// Escrow account
 #[repr(C)]
 #[derive(Clone, Copy, Debug, PartialEq, Pod, ShankAccount, Zeroable)]
-pub struct Relay {
+pub struct Escrow {
     /// The signer authorized to use this relay account.
     pub authority: Pubkey,
 
     /// The bump used for signing CPIs.
     pub bump: u64,
 
-    /// The address of the proof account this relayer manages
-    pub proof: Pubkey,
+    /// The relayer this escrow account is associated with.
+    pub relayer: Pubkey,
 }
 
-impl Discriminator for Relay {
+impl Discriminator for Escrow {
     fn discriminator() -> u8 {
-        AccountDiscriminator::Relay.into()
+        AccountDiscriminator::Escrow.into()
     }
 }
 
-impl_to_bytes!(Relay);
-impl_account_from_bytes!(Relay);
+impl_to_bytes!(Escrow);
+impl_account_from_bytes!(Escrow);

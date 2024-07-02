@@ -1,6 +1,8 @@
-mod open;
+mod open_escrow;
+mod open_relayer;
 
-use open::*;
+use open_escrow::*;
+use open_relayer::*;
 
 use ore_relay_api::instruction::*;
 use solana_program::{
@@ -25,7 +27,9 @@ pub fn process_instruction(
         .ok_or(ProgramError::InvalidInstructionData)?;
 
     match RelayInstruction::try_from(*tag).or(Err(ProgramError::InvalidInstructionData))? {
-        RelayInstruction::Open => process_open(accounts, data)?,
+        RelayInstruction::OpenEscrow => process_open_escrow(accounts, data)?,
+        RelayInstruction::OpenRelayer => process_open_relayer(accounts, data)?,
+        _ => {}
     }
 
     Ok(())
