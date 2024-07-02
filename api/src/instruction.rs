@@ -71,7 +71,12 @@ pub enum RelayInstruction {
     #[account(9, name = "token_program", desc = "SPL token program")]
     Collect = 101, 
 
-    // TODO UpdateMiner
+    #[account(0, name = "relay_program", desc = "Relay program")]
+    #[account(1, name = "signer", desc = "Signer", signer)]
+    #[account(2, name = "miner", desc = "Miner authority")]
+    #[account(3, name = "proof", desc = "ORE proof account", writable)]
+    #[account(4, name = "relayer", desc = "Relayer account")]
+    #[account(5, name = "ore_program", desc = "ORE program")]
     UpdateMiner = 102, 
 
     // TODO UpdateRelayer
