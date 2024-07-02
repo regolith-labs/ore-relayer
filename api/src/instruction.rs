@@ -28,7 +28,11 @@ pub enum RelayInstruction {
     #[account(8, name = "token_program", desc = "SPL token program")]
     Claim = 0, 
 
-    // TODO CloseEscrow
+    #[account(0, name = "relay_program", desc = "Relay program")]
+    #[account(1, name = "signer", desc = "Signer", signer)]
+    #[account(2, name = "proof", desc = "ORE proof account", writable)]
+    #[account(3, name = "ore_program", desc = "ORE program")]
+    #[account(4, name = "system_program", desc = "Solana system program")]
     CloseEscrow = 1,
 
     #[account(0, name = "relay_program", desc = "Relay program")]
