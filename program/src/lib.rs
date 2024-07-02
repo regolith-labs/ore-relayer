@@ -1,10 +1,12 @@
 mod collect;
 mod open_escrow;
 mod open_relayer;
+mod stake;
 
 use collect::*;
 use open_escrow::*;
 use open_relayer::*;
+use stake::*;
 
 use ore_relay_api::instruction::*;
 use solana_program::{
@@ -30,6 +32,7 @@ pub fn process_instruction(
 
     match RelayInstruction::try_from(*tag).or(Err(ProgramError::InvalidInstructionData))? {
         RelayInstruction::Collect => process_collect(accounts, data)?,
+        RelayInstruction::Stake => process_stake(accounts, data)?,
         RelayInstruction::OpenEscrow => process_open_escrow(accounts, data)?,
         RelayInstruction::OpenRelayer => process_open_relayer(accounts, data)?,
         _ => {}

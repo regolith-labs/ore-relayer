@@ -88,6 +88,12 @@ pub struct OpenRelayerArgs {
     pub bump: u8,
 }
 
+#[repr(C)]
+#[derive(Clone, Copy, Debug, Pod, Zeroable)]
+pub struct StakeArgs {
+    pub amount: u64,
+}
+
 impl RelayInstruction {
     pub fn to_vec(&self) -> Vec<u8> {
         vec![*self as u8]
@@ -96,24 +102,28 @@ impl RelayInstruction {
 
 impl_to_bytes!(OpenEscrowArgs);
 impl_to_bytes!(OpenRelayerArgs);
+impl_to_bytes!(StakeArgs);
 
 impl_instruction_from_bytes!(OpenEscrowArgs);
 impl_instruction_from_bytes!(OpenRelayerArgs);
+impl_instruction_from_bytes!(StakeArgs);
 
-// TODO
 // Builds an open_escrow instruction.
-pub fn open_escrow(signer: Pubkey, relayer: Pubkey) -> Instruction {
+pub fn open_escrow(signer: Pubkey, miner: Pubkey, relayer: Pubkey) -> Instruction {
     let escrow_pda =
         Pubkey::find_program_address(&[ESCROW, signer.as_ref(), relayer.as_ref()], &crate::id());
     let proof_pda = Pubkey::find_program_address(&[PROOF, escrow_pda.0.as_ref()], &ore_api::id());
-    // let pool_tokens_address =
-    //     spl_associated_token_account::get_associated_token_address(&pool_pda.0, &MINT_ADDRESS);
+    let escrow_tokens_address =
+        spl_associated_token_account::get_associated_token_address(&escrow_pda.0, &MINT_ADDRESS);
     Instruction {
         program_id: crate::id(),
         accounts: vec![
             AccountMeta::new(signer, true),
             AccountMeta::new(escrow_pda.0, false),
+            AccountMeta::new(escrow_tokens_address, false),
+            AccountMeta::new_readonly(miner, false),
             AccountMeta::new(proof_pda.0, false),
+            AccountMeta::new(relayer, false),
             AccountMeta::new_readonly(ore_api::id(), false),
             AccountMeta::new_readonly(system_program::id(), false),
             AccountMeta::new_readonly(sysvar::slot_hashes::id(), false),
@@ -134,9 +144,6 @@ pub fn open_escrow(signer: Pubkey, relayer: Pubkey) -> Instruction {
 // Builds an open_relayer instruction.
 pub fn open_relayer(signer: Pubkey) -> Instruction {
     let relayer_pda = Pubkey::find_program_address(&[RELAYER, signer.as_ref()], &crate::id());
-    // let proof_pda = Pubkey::find_program_address(&[PROOF, relayer_pda.0.as_ref()], &ore_api::id());
-    // let pool_tokens_address =
-    //     spl_associated_token_account::get_associated_token_address(&pool_pda.0, &MINT_ADDRESS);
     Instruction {
         program_id: crate::id(),
         accounts: vec![

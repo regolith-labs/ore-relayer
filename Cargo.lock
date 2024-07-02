@@ -1314,7 +1314,7 @@ checksum = "624a8340c38c1b80fd549087862da4ba43e08858af025b236e509b6649fc13d5"
 [[package]]
 name = "ore-api"
 version = "2.0.0"
-source = "git+https://github.com/regolith-labs/ore?rev=b55b6d3#b55b6d338dfa0f4f2027c480c10d552a7e9caffa"
+source = "git+https://github.com/regolith-labs/ore?rev=3b1039b#3b1039b46908647df42dbd66c7967b7ef3dbe27e"
 dependencies = [
  "array-const-fn-init",
  "bytemuck",
@@ -2518,7 +2518,7 @@ dependencies = [
 [[package]]
 name = "utils"
 version = "2.0.0"
-source = "git+https://github.com/regolith-labs/ore?rev=b55b6d3#b55b6d338dfa0f4f2027c480c10d552a7e9caffa"
+source = "git+https://github.com/regolith-labs/ore?rev=3b1039b#3b1039b46908647df42dbd66c7967b7ef3dbe27e"
 dependencies = [
  "bytemuck",
  "solana-program",
