@@ -1,6 +1,8 @@
+mod collect;
 mod open_escrow;
 mod open_relayer;
 
+use collect::*;
 use open_escrow::*;
 use open_relayer::*;
 
@@ -27,6 +29,7 @@ pub fn process_instruction(
         .ok_or(ProgramError::InvalidInstructionData)?;
 
     match RelayInstruction::try_from(*tag).or(Err(ProgramError::InvalidInstructionData))? {
+        RelayInstruction::Collect => process_collect(accounts, data)?,
         RelayInstruction::OpenEscrow => process_open_escrow(accounts, data)?,
         RelayInstruction::OpenRelayer => process_open_relayer(accounts, data)?,
         _ => {}

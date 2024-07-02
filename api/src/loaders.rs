@@ -7,12 +7,45 @@ pub use ore_api::loaders::*;
 /// Errors if:
 /// - Owner is not relay program.
 /// - Data is empty.
+/// - Account cannot be parsed to a escrow account.
+/// - Escrow relayer is not expected value.
+/// - Expected to be writable, but is not.
+pub fn load_escrow_with_relayer<'a, 'info>(
+    info: &'a AccountInfo<'info>,
+    relayer: &Pubkey,
+    is_writable: bool,
+) -> Result<(), ProgramError> {
+    if info.owner.ne(&ore_api::id()) {
+        return Err(ProgramError::InvalidAccountOwner);
+    }
+
+    if info.data_is_empty() {
+        return Err(ProgramError::UninitializedAccount);
+    }
+
+    let escrow_data = info.data.borrow();
+    let escrow = Escrow::try_from_bytes(&escrow_data)?;
+
+    if escrow.relayer.ne(&relayer) {
+        return Err(ProgramError::InvalidAccountData);
+    }
+
+    if is_writable && !info.is_writable {
+        return Err(ProgramError::InvalidAccountData);
+    }
+
+    Ok(())
+}
+
+/// Errors if:
+/// - Owner is not relay program.
+/// - Data is empty.
 /// - Account cannot be parsed to a relayer account.
 /// - Relayer authority is not expected value.
 /// - Expected to be writable, but is not.
 pub fn load_relayer<'a, 'info>(
     info: &'a AccountInfo<'info>,
-    authority: Pubkey,
+    authority: &Pubkey,
     is_writable: bool,
 ) -> Result<(), ProgramError> {
     if info.owner.ne(&ore_api::id()) {
