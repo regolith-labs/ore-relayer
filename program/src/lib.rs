@@ -1,4 +1,5 @@
 mod claim;
+mod close_escrow;
 mod collect;
 mod open_escrow;
 mod open_relayer;
@@ -6,6 +7,7 @@ mod stake;
 mod update_miner;
 
 use claim::*;
+use close_escrow::*;
 use collect::*;
 use open_escrow::*;
 use open_relayer::*;
@@ -39,6 +41,7 @@ pub fn process_instruction(
         RelayInstruction::Claim => process_claim(accounts, data)?,
         RelayInstruction::Stake => process_stake(accounts, data)?,
         RelayInstruction::OpenEscrow => process_open_escrow(accounts, data)?,
+        RelayInstruction::CloseEscrow => process_close_escrow(accounts, data)?,
 
         // Relayer ixs
         RelayInstruction::OpenRelayer => process_open_relayer(accounts, data)?,

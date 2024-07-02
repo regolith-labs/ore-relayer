@@ -80,6 +80,10 @@ pub enum RelayInstruction {
     UpdateMiner = 102, 
 
     // TODO UpdateRelayer
+    // TODO Support time-delayed update to commission 
+    //      (commission changes should take ~1 week from proposal to commit.
+    //       This gives miners enough time for users to switch and avoid commission rugging).
+    // TODO Maybe commission should be capped to a max of whatever the current base reward rate is.
     UpdateRelayer = 103,
 }
 
