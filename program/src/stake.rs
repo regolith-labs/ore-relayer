@@ -11,7 +11,7 @@ pub fn process_stake<'a, 'info>(accounts: &'a [AccountInfo<'info>], data: &[u8])
     let args = StakeArgs::try_from_bytes(data)?;
 
     // Load accounts.
-    let [signer, escrow_info, escrow_tokens_info, proof_info, treasury_tokens_info, ore_program, token_program] =
+    let [signer, escrow_info, escrow_tokens_info, proof_info, sender_info, treasury_tokens_info, ore_program, token_program] =
         accounts
     else {
         return Err(ProgramError::NotEnoughAccountKeys);
@@ -25,11 +25,28 @@ pub fn process_stake<'a, 'info>(accounts: &'a [AccountInfo<'info>], data: &[u8])
         true,
     )?;
     load_proof(proof_info, escrow_info.key, true)?;
+    load_token_account(sender_info, Some(signer.key), &MINT_ADDRESS, true)?;
     load_treasury_tokens(treasury_tokens_info, true)?;
     load_program(ore_program, ore_api::id())?;
     load_program(token_program, spl_token::id())?;
 
-    // TODO Transfer tokens from sender to escrow account
+    // Transfer tokens from sender to escrow account.
+    solana_program::program::invoke(
+        &spl_token::instruction::transfer(
+            &spl_token::id(),
+            sender_info.key,
+            escrow_tokens_info.key,
+            signer.key,
+            &[signer.key],
+            args.amount,
+        )?,
+        &[
+            token_program.clone(),
+            sender_info.clone(),
+            escrow_tokens_info.clone(),
+            signer.clone(),
+        ],
+    )?;
 
     // Stake ORE from escrow account
     let escrow_data = escrow_info.data.borrow();
