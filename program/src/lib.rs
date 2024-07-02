@@ -1,8 +1,10 @@
+mod claim;
 mod collect;
 mod open_escrow;
 mod open_relayer;
 mod stake;
 
+use claim::*;
 use collect::*;
 use open_escrow::*;
 use open_relayer::*;
@@ -31,10 +33,15 @@ pub fn process_instruction(
         .ok_or(ProgramError::InvalidInstructionData)?;
 
     match RelayInstruction::try_from(*tag).or(Err(ProgramError::InvalidInstructionData))? {
-        RelayInstruction::Collect => process_collect(accounts, data)?,
+        // User ixs
+        RelayInstruction::Claim => process_claim(accounts, data)?,
         RelayInstruction::Stake => process_stake(accounts, data)?,
         RelayInstruction::OpenEscrow => process_open_escrow(accounts, data)?,
+
+        // Relayer ixs
         RelayInstruction::OpenRelayer => process_open_relayer(accounts, data)?,
+        RelayInstruction::Collect => process_collect(accounts, data)?,
+
         _ => {}
     }
 

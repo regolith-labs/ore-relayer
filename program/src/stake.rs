@@ -1,5 +1,5 @@
-use ore_api::{consts::MINT_ADDRESS, instruction::StakeArgs};
-use ore_relay_api::{consts::*, loaders::*};
+use ore_api::consts::MINT_ADDRESS;
+use ore_relay_api::{consts::*, instruction::StakeArgs, loaders::*};
 use solana_program::{
     account_info::AccountInfo, entrypoint::ProgramResult, program_error::ProgramError,
 };
@@ -29,9 +29,6 @@ pub fn process_stake<'a, 'info>(accounts: &'a [AccountInfo<'info>], data: &[u8])
     load_program(ore_program, ore_api::id())?;
     load_program(token_program, spl_token::id())?;
 
-    // Get amount to stake
-    let amount = u64::from_le_bytes(args.amount);
-
     // TODO Transfer tokens from sender to escrow account
 
     // Stake ORE from escrow account
@@ -41,7 +38,7 @@ pub fn process_stake<'a, 'info>(accounts: &'a [AccountInfo<'info>], data: &[u8])
     let escrow_relayer = escrow.relayer;
     drop(escrow_data);
     solana_program::program::invoke_signed(
-        &ore_api::instruction::stake(*escrow_info.key, *escrow_tokens_info.key, amount),
+        &ore_api::instruction::stake(*escrow_info.key, *escrow_tokens_info.key, args.amount),
         &[
             ore_program.clone(),
             escrow_info.clone(),
