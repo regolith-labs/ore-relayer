@@ -27,7 +27,10 @@ pub struct Relayer {
     /// The bump used for signing CPIs.
     pub bump: u64,
 
-    /// The miner address to authorize on the proof.
+    /// The fixed commission of ORE the relayer is authorized to take per hash.
+    pub commission: u64,
+
+    /// The miner address users should authorize for signing.
     pub miner: Pubkey,
 
     /// The url where users can submit txs for signing.

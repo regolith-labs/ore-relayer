@@ -15,6 +15,9 @@ pub struct Escrow {
     /// The bump used for signing CPIs.
     pub bump: u64,
 
+    /// The last hash this relayer has collected commission on.
+    pub last_hash: [u8; 32],
+
     /// The relayer this escrow account is associated with.
     pub relayer: Pubkey,
 }

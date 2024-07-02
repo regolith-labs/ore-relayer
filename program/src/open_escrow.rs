@@ -1,6 +1,6 @@
 use std::mem::size_of;
 
-use ore_api::consts::PROOF;
+use ore_api::{consts::PROOF, state::Proof};
 use ore_relay_api::{consts::*, instruction::OpenEscrowArgs, loaders::*};
 use solana_program::{
     account_info::AccountInfo, entrypoint::ProgramResult, program_error::ProgramError,
@@ -42,6 +42,28 @@ pub fn process_open_escrow<'a, 'info>(
     load_program(system_program, system_program::id())?;
     load_sysvar(slot_hashes_sysvar, sysvar::slot_hashes::id())?;
 
+    // Open a proof account for mining.
+    solana_program::program::invoke_signed(
+        &ore_api::instruction::open(*escrow_info.key, *miner_info.key),
+        &[
+            escrow_info.clone(),
+            miner_info.clone(),
+            proof_info.clone(),
+            system_program.clone(),
+            slot_hashes_sysvar.clone(),
+        ],
+        &[&[
+            ESCROW,
+            signer.key.as_ref(),
+            relayer_info.key.as_ref(),
+            &[args.escrow_bump],
+        ]],
+    )?;
+
+    // Load the proof account
+    let proof_data = proof_info.data.borrow();
+    let proof = Proof::try_from_bytes(&proof_data)?;
+
     // Initialize escrow account.
     create_pda(
         escrow_info,
@@ -61,28 +83,10 @@ pub fn process_open_escrow<'a, 'info>(
     let escrow = Escrow::try_from_bytes_mut(&mut escrow_data)?;
     escrow.authority = *signer.key;
     escrow.bump = args.escrow_bump as u64;
+    escrow.last_hash = proof.last_hash;
     escrow.relayer = *relayer_info.key;
 
     // TODO Initialize escrow tokens account
-
-    // Open a proof account for mining.
-    drop(escrow_data);
-    solana_program::program::invoke_signed(
-        &ore_api::instruction::open(*escrow_info.key, *miner_info.key),
-        &[
-            escrow_info.clone(),
-            miner_info.clone(),
-            proof_info.clone(),
-            system_program.clone(),
-            slot_hashes_sysvar.clone(),
-        ],
-        &[&[
-            ESCROW,
-            signer.key.as_ref(),
-            relayer_info.key.as_ref(),
-            &[args.escrow_bump],
-        ]],
-    )?;
 
     Ok(())
 }
