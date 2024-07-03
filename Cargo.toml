@@ -6,9 +6,9 @@ members = ["api", "program"]
 version = "2.0.0"
 edition = "2021"
 license = "Apache-2.0"
-homepage = "https://ore.supply"
-documentation = "https://ore.supply"
-repository = "https://github.com/regolith-labs/ore"
+homepage = "https://checkores.com"
+documentation = "https://checkores.com"
+repository = "https://github.com/regolith-labs/checkores"
 readme = "./README.md"
 keywords = ["solana", "crypto", "mining"]
 
@@ -16,8 +16,6 @@ keywords = ["solana", "crypto", "mining"]
 array-const-fn-init = "0.1.1"
 bytemuck = "1.14.3"
 const-crypto = "0.1.0"
-drillx = { git = "https://github.com/regolith-labs/drillx", branch = "master", features = ["solana"] }
-mpl-token-metadata = "4.1.2"
 num_enum = "0.7.2"
 ore-api = { git = "https://github.com/regolith-labs/ore", rev = "3b1039b" }
 shank = "0.3.0"

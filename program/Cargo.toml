@@ -1,6 +1,6 @@
 [package]
-name = "ore-relayer-program"
-description = "A relayer program for ORE frontends"
+name = "checkores-program"
+description = "A blockchain based territory control game"
 version.workspace = true
 edition.workspace = true
 license.workspace = true
@@ -19,9 +19,8 @@ no-entrypoint = []
 default = []
 
 [dependencies]
-mpl-token-metadata.workspace = true
+checkores-api = { path = "../api" }
 ore-api.workspace = true
-ore-relay-api = { path = "../api" }
 solana-program.workspace = true
 spl-token.workspace = true
 spl-associated-token-account.workspace = true

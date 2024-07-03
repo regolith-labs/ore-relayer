@@ -512,6 +512,34 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "fd16c4719339c4530435d38e511904438d07cce7950afa3718a84ac36c10e89e"
 
 [[package]]
+name = "checkores-api"
+version = "2.0.0"
+dependencies = [
+ "bytemuck",
+ "num_enum 0.7.2",
+ "ore-api",
+ "shank",
+ "solana-program",
+ "spl-associated-token-account",
+ "spl-token",
+ "static_assertions",
+ "thiserror",
+ "utils",
+]
+
+[[package]]
+name = "checkores-program"
+version = "2.0.0"
+dependencies = [
+ "checkores-api",
+ "ore-api",
+ "solana-program",
+ "spl-associated-token-account",
+ "spl-token",
+ "utils",
+]
+
+[[package]]
 name = "chrono"
 version = "0.4.31"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1328,36 +1356,6 @@ dependencies = [
  "spl-token",
  "static_assertions",
  "thiserror",
- "utils",
-]
-
-[[package]]
-name = "ore-relay-api"
-version = "2.0.0"
-dependencies = [
- "bytemuck",
- "mpl-token-metadata",
- "num_enum 0.7.2",
- "ore-api",
- "shank",
- "solana-program",
- "spl-associated-token-account",
- "spl-token",
- "static_assertions",
- "thiserror",
- "utils",
-]
-
-[[package]]
-name = "ore-relayer-program"
-version = "2.0.0"
-dependencies = [
- "mpl-token-metadata",
- "ore-api",
- "ore-relay-api",
- "solana-program",
- "spl-associated-token-account",
- "spl-token",
  "utils",
 ]
 
