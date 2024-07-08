@@ -1,5 +1,5 @@
+use ore_utils::{AccountDeserialize, Discriminator};
 use solana_program::{account_info::AccountInfo, program_error::ProgramError, pubkey::Pubkey};
-use utils::{AccountDeserialize, Discriminator};
 
 pub use crate::state::*;
 pub use ore_api::loaders::*;

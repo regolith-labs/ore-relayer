@@ -1,9 +1,9 @@
 use ore_api::consts::MINT_ADDRESS;
 use ore_relay_api::{consts::*, instruction::ClaimArgs, loaders::*};
+use ore_utils::AccountDeserialize;
 use solana_program::{
     account_info::AccountInfo, entrypoint::ProgramResult, program_error::ProgramError,
 };
-use utils::AccountDeserialize;
 
 /// Claims ORE from a user proof account.
 pub fn process_claim<'a, 'info>(accounts: &'a [AccountInfo<'info>], data: &[u8]) -> ProgramResult {

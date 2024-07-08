@@ -3,11 +3,11 @@ use std::mem::size_of;
 use ore_relay_api::{
     consts::*, error::RelayError, instruction::OpenRelayerArgs, loaders::*, state::Relayer,
 };
+use ore_utils::{create_pda, AccountDeserialize, Discriminator};
 use solana_program::{
     account_info::AccountInfo, entrypoint::ProgramResult, program_error::ProgramError,
     system_program,
 };
-use utils::{create_pda, AccountDeserialize, Discriminator};
 
 /// Opens a new relay account.
 pub fn process_open_relayer<'a, 'info>(

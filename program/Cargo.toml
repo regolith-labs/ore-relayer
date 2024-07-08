@@ -22,8 +22,8 @@ default = []
 mpl-token-metadata.workspace = true
 ore-api.workspace = true
 ore-relay-api = { path = "../api" }
+ore-utils.workspace = true
 solana-program.workspace = true
 spl-token.workspace = true
 spl-associated-token-account.workspace = true
-utils.workspace = true
 

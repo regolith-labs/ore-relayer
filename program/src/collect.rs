@@ -1,9 +1,9 @@
 use ore_api::{consts::MINT_ADDRESS, state::Proof};
 use ore_relay_api::{consts::*, error::RelayError, loaders::*};
+use ore_utils::AccountDeserialize;
 use solana_program::{
     account_info::AccountInfo, entrypoint::ProgramResult, program_error::ProgramError,
 };
-use utils::AccountDeserialize;
 
 /// Collects commission from a miner.
 pub fn process_collect<'a, 'info>(

@@ -1,6 +1,7 @@
 use bytemuck::{Pod, Zeroable};
 use num_enum::TryFromPrimitive;
 use ore_api::consts::*;
+use ore_utils::{impl_instruction_from_bytes, impl_to_bytes};
 use shank::ShankInstruction;
 use solana_program::{
     instruction::{AccountMeta, Instruction},
@@ -8,10 +9,7 @@ use solana_program::{
     system_program, sysvar,
 };
 
-use crate::{
-    consts::*,
-    utils::{impl_instruction_from_bytes, impl_to_bytes},
-};
+use crate::consts::*;
 
 #[repr(u8)]
 #[derive(Clone, Copy, Debug, Eq, PartialEq, ShankInstruction, TryFromPrimitive)]

@@ -1,9 +1,9 @@
 use ore_relay_api::{consts::*, loaders::*};
+use ore_utils::AccountDeserialize;
 use solana_program::{
     account_info::AccountInfo, entrypoint::ProgramResult, program_error::ProgramError,
     system_program,
 };
-use utils::AccountDeserialize;
 
 /// Closes an escrow account.
 pub fn process_close_escrow<'a, 'info>(

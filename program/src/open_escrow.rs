@@ -1,12 +1,15 @@
 use std::mem::size_of;
 
-use ore_api::{consts::PROOF, state::Proof};
+use ore_api::{
+    consts::{MINT_ADDRESS, PROOF},
+    state::Proof,
+};
 use ore_relay_api::{consts::*, instruction::OpenEscrowArgs, loaders::*};
+use ore_utils::{create_pda, spl::create_ata, AccountDeserialize, Discriminator};
 use solana_program::{
     account_info::AccountInfo, entrypoint::ProgramResult, program_error::ProgramError,
     system_program, sysvar,
 };
-use utils::{create_pda, AccountDeserialize, Discriminator};
 
 /// Opens a new escrow account.
 pub fn process_open_escrow<'a, 'info>(
@@ -17,7 +20,7 @@ pub fn process_open_escrow<'a, 'info>(
     let args = OpenEscrowArgs::try_from_bytes(data)?;
 
     // Load accounts.
-    let [signer, escrow_info, escrow_tokens, miner_info, proof_info, relayer_info, ore_program, system_program, slot_hashes_sysvar] =
+    let [signer, escrow_info, escrow_tokens, miner_info, mint_info, proof_info, relayer_info, ore_program, system_program, token_program, associated_token_program, slot_hashes_sysvar] =
         accounts
     else {
         return Err(ProgramError::NotEnoughAccountKeys);
@@ -31,6 +34,7 @@ pub fn process_open_escrow<'a, 'info>(
     )?;
     load_system_account(escrow_tokens, true)?;
     load_system_account(miner_info, false)?;
+    load_mint(mint_info, MINT_ADDRESS, false)?;
     load_uninitialized_pda(
         escrow_info,
         &[ESCROW, signer.key.as_ref(), relayer_info.key.as_ref()],
@@ -39,6 +43,8 @@ pub fn process_open_escrow<'a, 'info>(
     )?;
     load_any_relayer(relayer_info, true)?;
     load_program(ore_program, ore_api::id())?;
+    load_program(token_program, spl_token::id())?;
+    load_program(associated_token_program, spl_associated_token_account::id())?;
     load_program(system_program, system_program::id())?;
     load_sysvar(slot_hashes_sysvar, sysvar::slot_hashes::id())?;
 
@@ -86,7 +92,16 @@ pub fn process_open_escrow<'a, 'info>(
     escrow.last_hash = proof.last_hash;
     escrow.relayer = *relayer_info.key;
 
-    // TODO Initialize escrow tokens account
+    // Initialize escrow tokens account
+    create_ata(
+        signer,
+        escrow_info,
+        escrow_tokens,
+        mint_info,
+        system_program,
+        token_program,
+        associated_token_program,
+    )?;
 
     Ok(())
 }

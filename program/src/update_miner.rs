@@ -1,8 +1,8 @@
 use ore_relay_api::{consts::*, loaders::*};
+use ore_utils::AccountDeserialize;
 use solana_program::{
     account_info::AccountInfo, entrypoint::ProgramResult, program_error::ProgramError,
 };
-use utils::AccountDeserialize;
 
 /// Updates the miner authority for a particular proof account.
 pub fn process_update_miner<'a, 'info>(
