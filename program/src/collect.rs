@@ -44,6 +44,7 @@ pub fn process_collect<'a, 'info>(
     escrow.last_hash = proof.last_hash;
 
     // Claim commission
+    let escrow_authority = escrow.authority;
     let escrow_bump = escrow.bump as u8;
     drop(escrow_data);
     drop(proof_data);
@@ -59,7 +60,7 @@ pub fn process_collect<'a, 'info>(
         ],
         &[&[
             ESCROW,
-            signer.key.as_ref(),
+            escrow_authority.as_ref(),
             relayer_info.key.as_ref(),
             &[escrow_bump],
         ]],
