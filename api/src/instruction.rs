@@ -176,10 +176,13 @@ pub fn open_escrow(signer: Pubkey, relayer: Relayer) -> Instruction {
             AccountMeta::new(escrow_pda.0, false),
             AccountMeta::new(escrow_tokens_address, false),
             AccountMeta::new_readonly(relayer.miner, false),
+            AccountMeta::new_readonly(MINT_ADDRESS, false),
             AccountMeta::new(proof_pda.0, false),
             AccountMeta::new(relayer_pda, false),
             AccountMeta::new_readonly(ore_api::id(), false),
             AccountMeta::new_readonly(system_program::id(), false),
+            AccountMeta::new_readonly(spl_token::id(), false),
+            AccountMeta::new_readonly(spl_associated_token_account::id(), false),
             AccountMeta::new_readonly(sysvar::slot_hashes::id(), false),
         ],
         data: [
