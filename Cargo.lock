@@ -729,7 +729,7 @@ dependencies = [
 [[package]]
 name = "drillx"
 version = "0.2.0"
-source = "git+https://github.com/regolith-labs/drillx?branch=master#ce0330957a2153c9191bdbcbcf4acce031ccd6bf"
+source = "git+https://github.com/regolith-labs/drillx?branch=relayer-integration#ce0330957a2153c9191bdbcbcf4acce031ccd6bf"
 dependencies = [
  "blake3",
  "equix",
@@ -1314,7 +1314,7 @@ checksum = "624a8340c38c1b80fd549087862da4ba43e08858af025b236e509b6649fc13d5"
 [[package]]
 name = "ore-api"
 version = "2.0.0"
-source = "git+https://github.com/regolith-labs/ore?branch=relayer-integration#d19dc0b7d57a7af11ce5f9a9a69d1d8940cda596"
+source = "git+https://github.com/regolith-labs/ore?branch=relayer-integration#bef48eb36fef5f59b4325b1b852848fc571c55f7"
 dependencies = [
  "array-const-fn-init",
  "bytemuck",
@@ -1364,7 +1364,7 @@ dependencies = [
 [[package]]
 name = "ore-utils"
 version = "2.0.0"
-source = "git+https://github.com/regolith-labs/ore?branch=relayer-integration#d19dc0b7d57a7af11ce5f9a9a69d1d8940cda596"
+source = "git+https://github.com/regolith-labs/ore?branch=relayer-integration#bef48eb36fef5f59b4325b1b852848fc571c55f7"
 dependencies = [
  "bytemuck",
  "solana-program",
