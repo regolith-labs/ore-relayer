@@ -169,6 +169,16 @@ pub fn open_escrow(signer: Pubkey, relayer: Relayer) -> Instruction {
     let proof_pda = Pubkey::find_program_address(&[PROOF, escrow_pda.0.as_ref()], &ore_api::id());
     let escrow_tokens_address =
         spl_associated_token_account::get_associated_token_address(&escrow_pda.0, &MINT_ADDRESS);
+    println!("signer: {}", signer.to_string());
+    println!("escrow pda: {}", escrow_pda.0.to_string());
+    println!(
+        "escrow tokens address: {}",
+        escrow_tokens_address.to_string()
+    );
+    println!("miner: {}", relayer.miner.to_string());
+    println!("mint address: {}", MINT_ADDRESS.to_string());
+    println!("proof pda: {}", proof_pda.0.to_string());
+    println!("relayer pda: {}", relayer_pda.to_string());
     Instruction {
         program_id: crate::id(),
         accounts: vec![
