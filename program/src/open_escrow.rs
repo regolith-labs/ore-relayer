@@ -4,7 +4,7 @@ use ore_api::{
     consts::{MINT_ADDRESS, PROOF},
     state::Proof,
 };
-use ore_relay_api::{consts::*, instruction::OpenEscrowArgs, loaders::*};
+use ore_relay_api::{consts::*, error::RelayError, instruction::OpenEscrowArgs, loaders::*};
 use ore_utils::{create_pda, spl::create_ata, AccountDeserialize, Discriminator};
 use solana_program::{
     account_info::AccountInfo, entrypoint::ProgramResult, program_error::ProgramError,
@@ -47,6 +47,15 @@ pub fn process_open_escrow<'a, 'info>(
     load_program(associated_token_program, spl_associated_token_account::id())?;
     load_program(system_program, system_program::id())?;
     load_sysvar(slot_hashes_sysvar, sysvar::slot_hashes::id())?;
+
+    // Load the relay account
+    let relayer_data = relayer_info.data.borrow();
+    let relayer = Relayer::try_from_bytes(&relayer_data)?;
+
+    // validate miner against relayer
+    if !miner_info.key.eq(&relayer.miner) {
+        return Err(RelayError::Dummy.into());
+    }
 
     // Open a proof account for mining.
     solana_program::program::invoke_signed(

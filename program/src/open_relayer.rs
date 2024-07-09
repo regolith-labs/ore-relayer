@@ -18,10 +18,11 @@ pub fn process_open_relayer<'a, 'info>(
     let args = OpenRelayerArgs::try_from_bytes(data)?;
 
     // Load accounts.
-    let [signer, relayer_info, system_program] = accounts else {
+    let [signer, miner_info, relayer_info, system_program] = accounts else {
         return Err(ProgramError::NotEnoughAccountKeys);
     };
     load_signer(signer)?;
+    load_system_account(miner_info, false)?;
     load_uninitialized_pda(
         relayer_info,
         &[RELAYER, signer.key.as_ref()],
@@ -49,6 +50,8 @@ pub fn process_open_relayer<'a, 'info>(
     let relayer = Relayer::try_from_bytes_mut(&mut relayer_data)?;
     relayer.authority = *signer.key;
     relayer.bump = args.bump as u64;
+    relayer.commission = 1_100;
+    relayer.miner = *miner_info.key;
 
     Ok(())
 }

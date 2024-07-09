@@ -199,12 +199,13 @@ pub fn open_escrow(signer: Pubkey, relayer: Relayer) -> Instruction {
 }
 
 // Builds an open_relayer instruction.
-pub fn open_relayer(signer: Pubkey) -> Instruction {
+pub fn open_relayer(signer: Pubkey, miner: Pubkey) -> Instruction {
     let relayer_pda = Pubkey::find_program_address(&[RELAYER, signer.as_ref()], &crate::id());
     Instruction {
         program_id: crate::id(),
         accounts: vec![
             AccountMeta::new(signer, true),
+            AccountMeta::new_readonly(miner, false),
             AccountMeta::new(relayer_pda.0, false),
             AccountMeta::new_readonly(system_program::id(), false),
         ],
