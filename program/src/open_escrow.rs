@@ -7,8 +7,8 @@ use ore_api::{
 use ore_relay_api::{consts::*, error::RelayError, instruction::OpenEscrowArgs, loaders::*};
 use ore_utils::{create_pda, spl::create_ata, AccountDeserialize, Discriminator};
 use solana_program::{
-    account_info::AccountInfo, entrypoint::ProgramResult, program_error::ProgramError,
-    system_program, sysvar,
+    account_info::AccountInfo, entrypoint::ProgramResult, log::sol_log,
+    program_error::ProgramError, system_program, sysvar,
 };
 
 /// Opens a new escrow account.
@@ -53,9 +53,11 @@ pub fn process_open_escrow<'a, 'info>(
     let relayer = Relayer::try_from_bytes(&relayer_data)?;
 
     // validate miner against relayer
-    if !miner_info.key.eq(&relayer.miner) {
-        return Err(RelayError::Dummy.into());
-    }
+    // if !miner_info.key.eq(&relayer.miner) {
+    //     return Err(RelayError::Dummy.into());
+    // }
+    sol_log(&format!("relayer miner: {}", relayer.miner.to_string()));
+    sol_log(&format!("miner info: {}", miner_info.key.to_string()));
 
     // Open a proof account for mining.
     solana_program::program::invoke_signed(
