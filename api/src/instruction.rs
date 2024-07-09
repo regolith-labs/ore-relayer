@@ -9,7 +9,10 @@ use solana_program::{
     system_program, sysvar,
 };
 
-use crate::{consts::*, state::Relayer};
+use crate::{
+    consts::*,
+    state::{Escrow, Relayer},
+};
 
 #[repr(u8)]
 #[derive(Clone, Copy, Debug, Eq, PartialEq, ShankInstruction, TryFromPrimitive)]
@@ -129,6 +132,31 @@ impl_instruction_from_bytes!(ClaimArgs);
 impl_instruction_from_bytes!(OpenEscrowArgs);
 impl_instruction_from_bytes!(OpenRelayerArgs);
 impl_instruction_from_bytes!(StakeArgs);
+
+// Builds a collect instruction.
+pub fn collect(signer: Pubkey, escrow: Escrow, beneficiary: Pubkey) -> Instruction {
+    let (escrow_pda, _) = Pubkey::find_program_address(
+        &[ESCROW, escrow.authority.as_ref(), escrow.relayer.as_ref()],
+        &crate::id(),
+    );
+    let (proof_pda, _) =
+        Pubkey::find_program_address(&[PROOF, escrow_pda.as_ref()], &ore_api::id());
+    Instruction {
+        program_id: crate::id(),
+        accounts: vec![
+            AccountMeta::new(signer, true),
+            AccountMeta::new(beneficiary, false),
+            AccountMeta::new(escrow_pda, false),
+            AccountMeta::new(proof_pda, false),
+            AccountMeta::new(escrow.relayer, false),
+            AccountMeta::new(ore_api::consts::TREASURY_ADDRESS, false),
+            AccountMeta::new(ore_api::consts::TREASURY_TOKENS_ADDRESS, false),
+            AccountMeta::new_readonly(ore_api::id(), false),
+            AccountMeta::new_readonly(spl_token::id(), false),
+        ],
+        data: RelayInstruction::Collect.to_vec(),
+    }
+}
 
 // Builds an open_escrow instruction.
 pub fn open_escrow(signer: Pubkey, relayer: Relayer) -> Instruction {
