@@ -41,7 +41,7 @@ pub fn process_open_escrow<'a, 'info>(
         args.escrow_bump,
         &ore_relay_api::id(),
     )?;
-    load_any_relayer(relayer_info, true)?;
+    load_relayer(relayer_info, &AUTHORIZED_RELAYER, true)?;
     load_program(ore_program, ore_api::id())?;
     load_program(token_program, spl_token::id())?;
     load_program(associated_token_program, spl_associated_token_account::id())?;
