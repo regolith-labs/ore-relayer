@@ -15,7 +15,7 @@ pub fn load_escrow<'a, 'info>(
     authority: &Pubkey,
     is_writable: bool,
 ) -> Result<(), ProgramError> {
-    if info.owner.ne(&ore_api::id()) {
+    if info.owner.ne(&crate::id()) {
         return Err(ProgramError::InvalidAccountOwner);
     }
 
@@ -48,7 +48,7 @@ pub fn load_escrow_with_relayer<'a, 'info>(
     relayer: &Pubkey,
     is_writable: bool,
 ) -> Result<(), ProgramError> {
-    if info.owner.ne(&ore_api::id()) {
+    if info.owner.ne(&crate::id()) {
         return Err(ProgramError::InvalidAccountOwner);
     }
 
@@ -81,7 +81,7 @@ pub fn load_relayer<'a, 'info>(
     authority: &Pubkey,
     is_writable: bool,
 ) -> Result<(), ProgramError> {
-    if info.owner.ne(&ore_api::id()) {
+    if info.owner.ne(&crate::id()) {
         return Err(ProgramError::InvalidAccountOwner);
     }
 
@@ -112,7 +112,7 @@ pub fn load_any_relayer<'a, 'info>(
     info: &'a AccountInfo<'info>,
     is_writable: bool,
 ) -> Result<(), ProgramError> {
-    if info.owner.ne(&ore_api::id()) {
+    if info.owner.ne(&crate::id()) {
         return Err(ProgramError::InvalidAccountOwner);
     }
 
