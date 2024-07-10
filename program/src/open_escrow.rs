@@ -75,23 +75,23 @@ pub fn process_open_escrow<'a, 'info>(
     )?;
 
     // // Open a proof account for mining
-    // solana_program::program::invoke_signed(
-    //     &ore_api::instruction::open(*escrow_info.key, *miner_info.key, *signer.key),
-    //     &[
-    //         escrow_info.clone(),
-    //         signer.clone(),
-    //         miner_info.clone(),
-    //         proof_info.clone(),
-    //         system_program.clone(),
-    //         slot_hashes_sysvar.clone(),
-    //     ],
-    //     &[&[
-    //         ESCROW,
-    //         signer.key.as_ref(),
-    //         relayer_info.key.as_ref(),
-    //         &[args.escrow_bump],
-    //     ]],
-    // )?;
+    solana_program::program::invoke_signed(
+        &ore_api::instruction::open(*escrow_info.key, *miner_info.key, *signer.key),
+        &[
+            escrow_info.clone(),
+            signer.clone(),
+            miner_info.clone(),
+            proof_info.clone(),
+            system_program.clone(),
+            slot_hashes_sysvar.clone(),
+        ],
+        &[&[
+            ESCROW,
+            signer.key.as_ref(),
+            relayer_info.key.as_ref(),
+            &[args.escrow_bump],
+        ]],
+    )?;
 
     // // Load the proof account
     // let proof_data = proof_info.data.borrow();
