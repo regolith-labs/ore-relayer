@@ -20,12 +20,13 @@ pub fn process_open_escrow<'a, 'info>(
     let args = OpenEscrowArgs::try_from_bytes(data)?;
 
     // Load accounts
-    let [signer, escrow_info, escrow_tokens, miner_info, mint_info, proof_info, relayer_info, ore_program, system_program, token_program, associated_token_program, slot_hashes_sysvar] =
+    let [signer, miner_info, escrow_info, escrow_tokens, mint_info, proof_info, relayer_info, ore_program, system_program, token_program, associated_token_program, slot_hashes_sysvar] =
         accounts
     else {
         return Err(ProgramError::NotEnoughAccountKeys);
     };
     load_signer(signer)?;
+    load_signer(miner_info)?;
     load_uninitialized_pda(
         proof_info,
         &[PROOF, escrow_info.key.as_ref()],
@@ -33,7 +34,6 @@ pub fn process_open_escrow<'a, 'info>(
         &ore_api::id(),
     )?;
     load_system_account(escrow_tokens, true)?;
-    load_system_account(miner_info, false)?;
     load_mint(mint_info, MINT_ADDRESS, false)?;
     load_uninitialized_pda(
         escrow_info,
@@ -76,10 +76,9 @@ pub fn process_open_escrow<'a, 'info>(
 
     // // Open a proof account for mining
     solana_program::program::invoke_signed(
-        &ore_api::instruction::open(*escrow_info.key, *miner_info.key, *signer.key),
+        &ore_api::instruction::open(*escrow_info.key, *miner_info.key),
         &[
             escrow_info.clone(),
-            signer.clone(),
             miner_info.clone(),
             proof_info.clone(),
             system_program.clone(),

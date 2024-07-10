@@ -183,9 +183,9 @@ pub fn open_escrow(signer: Pubkey, relayer: Relayer) -> Instruction {
         program_id: crate::id(),
         accounts: vec![
             AccountMeta::new(signer, true),
+            AccountMeta::new(relayer.miner, true),
             AccountMeta::new(escrow_pda.0, false),
             AccountMeta::new(escrow_tokens_address, false),
-            AccountMeta::new_readonly(relayer.miner, false),
             AccountMeta::new_readonly(MINT_ADDRESS, false),
             AccountMeta::new(proof_pda.0, false),
             AccountMeta::new(relayer_pda, false),
