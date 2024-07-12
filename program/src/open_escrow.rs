@@ -53,9 +53,9 @@ pub fn process_open_escrow<'a, 'info>(
     let relayer = Relayer::try_from_bytes(&relayer_data)?;
 
     // validate miner against relayer
-    if !miner_info.key.eq(&relayer.miner) {
-        return Err(RelayError::Dummy.into());
-    }
+    // if !miner_info.key.eq(&relayer.miner) {
+    //     return Err(RelayError::Dummy.into());
+    // }
     sol_log(&format!("relayer miner: {}", relayer.miner.to_string()));
     sol_log(&format!("miner info: {}", miner_info.key.to_string()));
 
