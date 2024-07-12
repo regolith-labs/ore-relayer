@@ -11,7 +11,7 @@ pub fn process_collect<'a, 'info>(
     _data: &[u8],
 ) -> ProgramResult {
     // Load accounts.
-    let [signer, beneficiary_info, escrow_info, proof_info, relayer_info, treasury_info, treasury_tokens_info, ore_program, token_program] =
+    let [signer, beneficiary_info, escrow_info, proof_info, relayer_info, mint_info, treasury_info, treasury_tokens_info, ore_program, token_program] =
         accounts
     else {
         return Err(ProgramError::NotEnoughAccountKeys);
@@ -21,6 +21,7 @@ pub fn process_collect<'a, 'info>(
     load_escrow_with_relayer(escrow_info, relayer_info.key, true)?;
     load_proof(proof_info, escrow_info.key, true)?;
     load_relayer(relayer_info, signer.key, true)?;
+    load_mint(mint_info, ore_api::consts::MINT_ADDRESS, false)?;
     load_treasury(treasury_info, true)?;
     load_treasury_tokens(treasury_tokens_info, true)?;
     load_program(ore_program, ore_api::id())?;
@@ -53,6 +54,7 @@ pub fn process_collect<'a, 'info>(
         &[
             escrow_info.clone(),
             beneficiary_info.clone(),
+            mint_info.clone(),
             proof_info.clone(),
             treasury_info.clone(),
             treasury_tokens_info.clone(),
