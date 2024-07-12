@@ -21,7 +21,7 @@ pub fn process_collect<'a, 'info>(
     load_escrow_with_relayer(escrow_info, relayer_info.key, true)?;
     load_proof(proof_info, escrow_info.key, true)?;
     load_relayer(relayer_info, signer.key, true)?;
-    load_treasury(treasury_info, true)?;
+    load_treasury(treasury_info, false)?;
     load_treasury_tokens(treasury_tokens_info, true)?;
     load_program(ore_program, ore_api::id())?;
     load_program(token_program, spl_token::id())?;

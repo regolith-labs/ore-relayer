@@ -149,7 +149,7 @@ pub fn collect(signer: Pubkey, escrow: Escrow, beneficiary: Pubkey) -> Instructi
             AccountMeta::new(escrow_pda, false),
             AccountMeta::new(proof_pda, false),
             AccountMeta::new(escrow.relayer, false),
-            AccountMeta::new(ore_api::consts::TREASURY_ADDRESS, false),
+            AccountMeta::new_readonly(ore_api::consts::TREASURY_ADDRESS, false),
             AccountMeta::new(ore_api::consts::TREASURY_TOKENS_ADDRESS, false),
             AccountMeta::new_readonly(ore_api::id(), false),
             AccountMeta::new_readonly(spl_token::id(), false),
