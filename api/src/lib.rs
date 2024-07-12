@@ -10,4 +10,4 @@ use solana_program::declare_id;
 
 // TODO
 // declare_id!("stakeHF5r6S7HyD9SppBfVMXMavDkJsxwGesEvxZr2A");
-declare_id!("CoG8pAPtJBDz9TVhYzyXgyqccozDfbNvDE4C7a5dMAnD");
+declare_id!("3kr3vWSrNtazmgRKQwbmXeoUzsis5FRj3STZAj3bKkAj");

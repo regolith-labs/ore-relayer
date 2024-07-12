@@ -159,7 +159,7 @@ pub fn collect(signer: Pubkey, escrow: Escrow, beneficiary: Pubkey) -> Instructi
 }
 
 // Builds an open_escrow instruction.
-pub fn open_escrow(signer: Pubkey, relayer: Relayer) -> Instruction {
+pub fn open_escrow(signer: Pubkey, relayer: Relayer, payer: Pubkey) -> Instruction {
     let (relayer_pda, _) =
         Pubkey::find_program_address(&[RELAYER, relayer.authority.as_ref()], &crate::id());
     let escrow_pda = Pubkey::find_program_address(
@@ -183,7 +183,8 @@ pub fn open_escrow(signer: Pubkey, relayer: Relayer) -> Instruction {
         program_id: crate::id(),
         accounts: vec![
             AccountMeta::new(signer, true),
-            AccountMeta::new(relayer.miner, true),
+            AccountMeta::new_readonly(relayer.miner, false),
+            AccountMeta::new(payer, true),
             AccountMeta::new(escrow_pda.0, false),
             AccountMeta::new(escrow_tokens_address, false),
             AccountMeta::new_readonly(MINT_ADDRESS, false),
