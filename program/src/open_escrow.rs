@@ -7,8 +7,8 @@ use ore_api::{
 use ore_relay_api::{consts::*, error::RelayError, instruction::OpenEscrowArgs, loaders::*};
 use ore_utils::{create_pda, spl::create_ata, AccountDeserialize, Discriminator};
 use solana_program::{
-    account_info::AccountInfo, entrypoint::ProgramResult, log::sol_log,
-    program_error::ProgramError, system_program, sysvar,
+    account_info::AccountInfo, entrypoint::ProgramResult, program_error::ProgramError,
+    system_program, sysvar,
 };
 
 /// Opens a new escrow account.
@@ -56,8 +56,6 @@ pub fn process_open_escrow<'a, 'info>(
     if !miner_info.key.eq(&relayer.miner) {
         return Err(RelayError::Dummy.into());
     }
-    sol_log(&format!("relayer miner: {}", relayer.miner.to_string()));
-    sol_log(&format!("miner info: {}", miner_info.key.to_string()));
 
     // Create escrow account
     create_pda(
@@ -75,35 +73,35 @@ pub fn process_open_escrow<'a, 'info>(
     )?;
 
     //// Open a proof account for mining
-    //solana_program::program::invoke_signed(
-    //    &ore_api::instruction::open(*escrow_info.key, *miner_info.key),
-    //    &[
-    //        escrow_info.clone(),
-    //        miner_info.clone(),
-    //        proof_info.clone(),
-    //        system_program.clone(),
-    //        slot_hashes_sysvar.clone(),
-    //    ],
-    //    &[&[
-    //        ESCROW,
-    //        signer.key.as_ref(),
-    //        relayer_info.key.as_ref(),
-    //        &[args.escrow_bump],
-    //    ]],
-    //)?;
+    solana_program::program::invoke_signed(
+        &ore_api::instruction::open(*escrow_info.key, *miner_info.key),
+        &[
+            escrow_info.clone(),
+            miner_info.clone(),
+            proof_info.clone(),
+            system_program.clone(),
+            slot_hashes_sysvar.clone(),
+        ],
+        &[&[
+            ESCROW,
+            signer.key.as_ref(),
+            relayer_info.key.as_ref(),
+            &[args.escrow_bump],
+        ]],
+    )?;
 
-    //// Load the proof account
-    //let proof_data = proof_info.data.borrow();
-    //let proof = Proof::try_from_bytes(&proof_data)?;
+    // Load the proof account
+    let proof_data = proof_info.data.borrow();
+    let proof = Proof::try_from_bytes(&proof_data)?;
 
-    //// Initialize escrow account
-    //let mut escrow_data = escrow_info.data.borrow_mut();
-    //escrow_data[0] = Escrow::discriminator() as u8;
-    //let escrow = Escrow::try_from_bytes_mut(&mut escrow_data)?;
-    //escrow.authority = *signer.key;
-    //escrow.bump = args.escrow_bump as u64;
-    //escrow.last_hash = proof.last_hash;
-    //escrow.relayer = *relayer_info.key;
+    // Initialize escrow account
+    let mut escrow_data = escrow_info.data.borrow_mut();
+    escrow_data[0] = Escrow::discriminator() as u8;
+    let escrow = Escrow::try_from_bytes_mut(&mut escrow_data)?;
+    escrow.authority = *signer.key;
+    escrow.bump = args.escrow_bump as u64;
+    escrow.last_hash = proof.last_hash;
+    escrow.relayer = *relayer_info.key;
 
     // // Initialize escrow tokens account
     // create_ata(
