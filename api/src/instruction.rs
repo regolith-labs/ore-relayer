@@ -159,7 +159,7 @@ pub fn collect(signer: Pubkey, escrow: Escrow, beneficiary: Pubkey) -> Instructi
 }
 
 // Builds a claim instruction.
-pub fn claim(signer: Pubkey, beneficiary: Pubkey, relayer_authority: Pubkey) {
+pub fn claim(signer: Pubkey, beneficiary: Pubkey, relayer_authority: Pubkey) -> Instruction {
     let (relayer_pda, _) =
         Pubkey::find_program_address(&[RELAYER, relayer_authority.as_ref()], &crate::id());
     let (escrow_pda, _) = Pubkey::find_program_address(
