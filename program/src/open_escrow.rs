@@ -105,16 +105,16 @@ pub fn process_open_escrow<'a, 'info>(
     escrow.last_hash = proof.last_hash;
     escrow.relayer = *relayer_info.key;
 
-    // // Initialize escrow tokens account
-    // create_ata(
-    //     signer,
-    //     escrow_info,
-    //     escrow_tokens,
-    //     mint_info,
-    //     system_program,
-    //     token_program,
-    //     associated_token_program,
-    // )?;
+    // Initialize escrow tokens account
+    create_ata(
+        signer,
+        escrow_info,
+        escrow_tokens,
+        mint_info,
+        system_program,
+        token_program,
+        associated_token_program,
+    )?;
 
     Ok(())
 }

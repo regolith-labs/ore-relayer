@@ -1314,8 +1314,9 @@ checksum = "624a8340c38c1b80fd549087862da4ba43e08858af025b236e509b6649fc13d5"
 
 [[package]]
 name = "ore-api"
-version = "2.0.0-beta.1"
-source = "git+https://github.com/regolith-labs/ore?branch=relayer-integration#dce5eb49cb0913d0d38259439860f354292cc245"
+version = "2.0.0-beta.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "612d67826797dd32cac2769662462875e6015af26e6d8ef553e03c9f3b0c9994"
 dependencies = [
  "array-const-fn-init",
  "bytemuck",
@@ -1334,7 +1335,7 @@ dependencies = [
 
 [[package]]
 name = "ore-relay-api"
-version = "2.0.0"
+version = "1.0.0-alpha"
 dependencies = [
  "bytemuck",
  "mpl-token-metadata",
@@ -1351,7 +1352,7 @@ dependencies = [
 
 [[package]]
 name = "ore-relayer-program"
-version = "2.0.0"
+version = "1.0.0-alpha"
 dependencies = [
  "mpl-token-metadata",
  "ore-api",
@@ -1364,8 +1365,9 @@ dependencies = [
 
 [[package]]
 name = "ore-utils"
-version = "2.0.0-beta.1"
-source = "git+https://github.com/regolith-labs/ore?branch=relayer-integration#dce5eb49cb0913d0d38259439860f354292cc245"
+version = "2.0.0-beta.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a57b6b200cb0a57758d440d3d0bbff3adfd1dfae377fb01bb68da66a767e7dd2"
 dependencies = [
  "bytemuck",
  "solana-program",
