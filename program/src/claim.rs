@@ -20,7 +20,7 @@ pub fn process_claim<'a, 'info>(accounts: &'a [AccountInfo<'info>], data: &[u8])
     load_token_account(beneficiary_info, None, &MINT_ADDRESS, true)?;
     load_escrow(escrow_info, signer.key, true)?;
     load_proof(proof_info, escrow_info.key, true)?;
-    load_treasury(treasury_info, true)?;
+    load_treasury(treasury_info, false)?;
     load_treasury_tokens(treasury_tokens_info, true)?;
     load_program(ore_program, ore_api::id())?;
     load_program(token_program, spl_token::id())?;
