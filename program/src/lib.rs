@@ -14,7 +14,7 @@ use open_relayer::*;
 use stake::*;
 use update_miner::*;
 
-use ore_relay_api::instruction::*;
+use ore_relayer_api::instruction::*;
 use solana_program::{
     self, account_info::AccountInfo, entrypoint::ProgramResult, program_error::ProgramError,
     pubkey::Pubkey,
@@ -28,7 +28,7 @@ pub fn process_instruction(
     accounts: &[AccountInfo],
     data: &[u8],
 ) -> ProgramResult {
-    if program_id.ne(&ore_relay_api::id()) {
+    if program_id.ne(&ore_relayer_api::id()) {
         return Err(ProgramError::IncorrectProgramId);
     }
 

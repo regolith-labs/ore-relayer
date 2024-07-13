@@ -4,7 +4,7 @@ use ore_api::{
     consts::{MINT_ADDRESS, PROOF},
     state::Proof,
 };
-use ore_relay_api::{consts::*, error::RelayError, instruction::OpenEscrowArgs, loaders::*};
+use ore_relayer_api::{consts::*, error::RelayError, instruction::OpenEscrowArgs, loaders::*};
 use ore_utils::{create_pda, spl::create_ata, AccountDeserialize, Discriminator};
 use solana_program::{
     account_info::AccountInfo, entrypoint::ProgramResult, program_error::ProgramError,
@@ -40,7 +40,7 @@ pub fn process_open_escrow<'a, 'info>(
         escrow_info,
         &[ESCROW, signer.key.as_ref(), relayer_info.key.as_ref()],
         args.escrow_bump,
-        &ore_relay_api::id(),
+        &ore_relayer_api::id(),
     )?;
     load_relayer(relayer_info, &AUTHORIZED_RELAYER, true)?;
     load_program(ore_program, ore_api::id())?;
@@ -61,7 +61,7 @@ pub fn process_open_escrow<'a, 'info>(
     // Create escrow account
     create_pda(
         escrow_info,
-        &ore_relay_api::id(),
+        &ore_relayer_api::id(),
         8 + size_of::<Escrow>(),
         &[
             ESCROW,

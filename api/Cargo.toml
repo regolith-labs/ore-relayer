@@ -1,5 +1,5 @@
 [package]
-name = "ore-relay-api"
+name = "ore-relayer-api"
 description = "API for interacting with the ORE relayer program"
 version.workspace = true
 edition.workspace = true

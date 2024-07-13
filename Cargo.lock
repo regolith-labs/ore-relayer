@@ -1334,7 +1334,20 @@ dependencies = [
 ]
 
 [[package]]
-name = "ore-relay-api"
+name = "ore-relayer"
+version = "1.0.0-alpha"
+dependencies = [
+ "mpl-token-metadata",
+ "ore-api",
+ "ore-relayer-api",
+ "ore-utils",
+ "solana-program",
+ "spl-associated-token-account",
+ "spl-token",
+]
+
+[[package]]
+name = "ore-relayer-api"
 version = "1.0.0-alpha"
 dependencies = [
  "bytemuck",
@@ -1348,19 +1361,6 @@ dependencies = [
  "spl-token",
  "static_assertions",
  "thiserror",
-]
-
-[[package]]
-name = "ore-relayer-program"
-version = "1.0.0-alpha"
-dependencies = [
- "mpl-token-metadata",
- "ore-api",
- "ore-relay-api",
- "ore-utils",
- "solana-program",
- "spl-associated-token-account",
- "spl-token",
 ]
 
 [[package]]
