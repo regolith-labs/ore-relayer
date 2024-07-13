@@ -9,7 +9,10 @@ use solana_program::{
     system_program, sysvar,
 };
 
-use crate::consts::*;
+use crate::{
+    consts::*,
+    state::{Escrow, Relayer},
+};
 
 #[repr(u8)]
 #[derive(Clone, Copy, Debug, Eq, PartialEq, ShankInstruction, TryFromPrimitive)]
@@ -130,24 +133,67 @@ impl_instruction_from_bytes!(OpenEscrowArgs);
 impl_instruction_from_bytes!(OpenRelayerArgs);
 impl_instruction_from_bytes!(StakeArgs);
 
-// Builds an open_escrow instruction.
-pub fn open_escrow(signer: Pubkey, miner: Pubkey, relayer: Pubkey) -> Instruction {
-    let escrow_pda =
-        Pubkey::find_program_address(&[ESCROW, signer.as_ref(), relayer.as_ref()], &crate::id());
-    let proof_pda = Pubkey::find_program_address(&[PROOF, escrow_pda.0.as_ref()], &ore_api::id());
-    let escrow_tokens_address =
-        spl_associated_token_account::get_associated_token_address(&escrow_pda.0, &MINT_ADDRESS);
+// Builds a collect instruction.
+pub fn collect(signer: Pubkey, escrow: Escrow, beneficiary: Pubkey) -> Instruction {
+    let (escrow_pda, _) = Pubkey::find_program_address(
+        &[ESCROW, escrow.authority.as_ref(), escrow.relayer.as_ref()],
+        &crate::id(),
+    );
+    let (proof_pda, _) =
+        Pubkey::find_program_address(&[PROOF, escrow_pda.as_ref()], &ore_api::id());
     Instruction {
         program_id: crate::id(),
         accounts: vec![
             AccountMeta::new(signer, true),
+            AccountMeta::new(beneficiary, false),
+            AccountMeta::new(escrow_pda, false),
+            AccountMeta::new(proof_pda, false),
+            AccountMeta::new(escrow.relayer, false),
+            AccountMeta::new_readonly(ore_api::consts::TREASURY_ADDRESS, false),
+            AccountMeta::new(ore_api::consts::TREASURY_TOKENS_ADDRESS, false),
+            AccountMeta::new_readonly(ore_api::id(), false),
+            AccountMeta::new_readonly(spl_token::id(), false),
+        ],
+        data: RelayInstruction::Collect.to_vec(),
+    }
+}
+
+// Builds an open_escrow instruction.
+pub fn open_escrow(signer: Pubkey, relayer: Relayer, payer: Pubkey) -> Instruction {
+    let (relayer_pda, _) =
+        Pubkey::find_program_address(&[RELAYER, relayer.authority.as_ref()], &crate::id());
+    let escrow_pda = Pubkey::find_program_address(
+        &[ESCROW, signer.as_ref(), relayer_pda.as_ref()],
+        &crate::id(),
+    );
+    let proof_pda = Pubkey::find_program_address(&[PROOF, escrow_pda.0.as_ref()], &ore_api::id());
+    let escrow_tokens_address =
+        spl_associated_token_account::get_associated_token_address(&escrow_pda.0, &MINT_ADDRESS);
+    println!("signer: {}", signer.to_string());
+    println!("escrow pda: {}", escrow_pda.0.to_string());
+    println!(
+        "escrow tokens address: {}",
+        escrow_tokens_address.to_string()
+    );
+    println!("miner: {}", relayer.miner.to_string());
+    println!("mint address: {}", MINT_ADDRESS.to_string());
+    println!("proof pda: {}", proof_pda.0.to_string());
+    println!("relayer pda: {}", relayer_pda.to_string());
+    Instruction {
+        program_id: crate::id(),
+        accounts: vec![
+            AccountMeta::new(signer, true),
+            AccountMeta::new_readonly(relayer.miner, false),
+            AccountMeta::new(payer, true),
             AccountMeta::new(escrow_pda.0, false),
             AccountMeta::new(escrow_tokens_address, false),
-            AccountMeta::new_readonly(miner, false),
+            AccountMeta::new_readonly(MINT_ADDRESS, false),
             AccountMeta::new(proof_pda.0, false),
-            AccountMeta::new(relayer, false),
+            AccountMeta::new(relayer_pda, false),
             AccountMeta::new_readonly(ore_api::id(), false),
             AccountMeta::new_readonly(system_program::id(), false),
+            AccountMeta::new_readonly(spl_token::id(), false),
+            AccountMeta::new_readonly(spl_associated_token_account::id(), false),
             AccountMeta::new_readonly(sysvar::slot_hashes::id(), false),
         ],
         data: [
@@ -164,12 +210,13 @@ pub fn open_escrow(signer: Pubkey, miner: Pubkey, relayer: Pubkey) -> Instructio
 }
 
 // Builds an open_relayer instruction.
-pub fn open_relayer(signer: Pubkey) -> Instruction {
+pub fn open_relayer(signer: Pubkey, miner: Pubkey) -> Instruction {
     let relayer_pda = Pubkey::find_program_address(&[RELAYER, signer.as_ref()], &crate::id());
     Instruction {
         program_id: crate::id(),
         accounts: vec![
             AccountMeta::new(signer, true),
+            AccountMeta::new_readonly(miner, false),
             AccountMeta::new(relayer_pda.0, false),
             AccountMeta::new_readonly(system_program::id(), false),
         ],

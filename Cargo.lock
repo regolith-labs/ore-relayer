@@ -728,8 +728,9 @@ dependencies = [
 
 [[package]]
 name = "drillx"
-version = "0.2.0"
-source = "git+https://github.com/regolith-labs/drillx?branch=master#ce0330957a2153c9191bdbcbcf4acce031ccd6bf"
+version = "2.0.0-beta"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a3e8d2de66aeedec77a653a4e2cf0cf4de4ddf556947214becfc16de4604c5db"
 dependencies = [
  "blake3",
  "equix",
@@ -1313,8 +1314,8 @@ checksum = "624a8340c38c1b80fd549087862da4ba43e08858af025b236e509b6649fc13d5"
 
 [[package]]
 name = "ore-api"
-version = "2.0.0"
-source = "git+https://github.com/regolith-labs/ore?rev=da28f90#da28f9022ce2a20b49c0ae3919cfc2b253764ddd"
+version = "2.0.0-beta.1"
+source = "git+https://github.com/regolith-labs/ore?branch=relayer-integration#dce5eb49cb0913d0d38259439860f354292cc245"
 dependencies = [
  "array-const-fn-init",
  "bytemuck",
@@ -1363,8 +1364,8 @@ dependencies = [
 
 [[package]]
 name = "ore-utils"
-version = "2.0.0"
-source = "git+https://github.com/regolith-labs/ore?rev=da28f90#da28f9022ce2a20b49c0ae3919cfc2b253764ddd"
+version = "2.0.0-beta.1"
+source = "git+https://github.com/regolith-labs/ore?branch=relayer-integration#dce5eb49cb0913d0d38259439860f354292cc245"
 dependencies = [
  "bytemuck",
  "solana-program",
