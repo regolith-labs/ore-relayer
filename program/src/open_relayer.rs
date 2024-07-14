@@ -1,6 +1,6 @@
 use std::mem::size_of;
 
-use ore_relay_api::{
+use ore_relayer_api::{
     consts::*, error::RelayError, instruction::OpenRelayerArgs, loaders::*, state::Relayer,
 };
 use ore_utils::{create_pda, AccountDeserialize, Discriminator};
@@ -27,7 +27,7 @@ pub fn process_open_relayer<'a, 'info>(
         relayer_info,
         &[RELAYER, signer.key.as_ref()],
         args.bump,
-        &ore_relay_api::id(),
+        &ore_relayer_api::id(),
     )?;
     load_program(system_program, system_program::id())?;
 
@@ -39,7 +39,7 @@ pub fn process_open_relayer<'a, 'info>(
     // Initialize relay account.
     create_pda(
         relayer_info,
-        &ore_relay_api::id(),
+        &ore_relayer_api::id(),
         8 + size_of::<Relayer>(),
         &[RELAYER, signer.key.as_ref(), &[args.bump]],
         system_program,

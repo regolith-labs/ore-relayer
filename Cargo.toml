@@ -3,7 +3,7 @@ resolver = "2"
 members = ["api", "program"]
 
 [workspace.package]
-version = "2.0.0"
+version = "1.0.0-alpha"
 edition = "2021"
 license = "Apache-2.0"
 homepage = "https://ore.supply"
@@ -19,15 +19,11 @@ const-crypto = "0.1.0"
 drillx = { version = "2.0.0-beta", features = ["solana"] }
 mpl-token-metadata = "4.1.2"
 num_enum = "0.7.2"
-ore-api = { git = "https://github.com/regolith-labs/ore", branch = "relayer-integration" }
-ore-utils = { git = "https://github.com/regolith-labs/ore", branch = "relayer-integration", features = [
-  "spl",
-] }
+ore-api = "2.0.0-beta.2"
+ore-utils = { version = "2.0.0-beta.2", features = ["spl"] }
 shank = "0.3.0"
 solana-program = "^1.18"
 spl-token = { version = "^4", features = ["no-entrypoint"] }
-spl-associated-token-account = { version = "^2.3", features = [
-  "no-entrypoint",
-] }
+spl-associated-token-account = { version = "^2.3", features = ["no-entrypoint"] }
 static_assertions = "1.1.0"
 thiserror = "1.0.57"

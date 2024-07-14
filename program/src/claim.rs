@@ -1,5 +1,5 @@
 use ore_api::consts::MINT_ADDRESS;
-use ore_relay_api::{consts::*, instruction::ClaimArgs, loaders::*};
+use ore_relayer_api::{consts::*, instruction::ClaimArgs, loaders::*};
 use ore_utils::AccountDeserialize;
 use solana_program::{
     account_info::AccountInfo, entrypoint::ProgramResult, log::sol_log, program_error::ProgramError,

@@ -1,4 +1,4 @@
-use ore_relay_api::{consts::*, loaders::*};
+use ore_relayer_api::{consts::*, loaders::*};
 use ore_utils::AccountDeserialize;
 use solana_program::{
     account_info::AccountInfo, entrypoint::ProgramResult, program_error::ProgramError,
