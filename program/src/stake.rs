@@ -9,6 +9,7 @@ use solana_program::{
 pub fn process_stake<'a, 'info>(accounts: &'a [AccountInfo<'info>], data: &[u8]) -> ProgramResult {
     // Parse args
     let args = StakeArgs::try_from_bytes(data)?;
+    let amount = u64::from_le_bytes(args.amount);
 
     // Load accounts.
     let [signer, escrow_info, escrow_tokens_info, proof_info, sender_info, treasury_tokens_info, ore_program, token_program] =
@@ -38,7 +39,7 @@ pub fn process_stake<'a, 'info>(accounts: &'a [AccountInfo<'info>], data: &[u8])
             escrow_tokens_info.key,
             signer.key,
             &[signer.key],
-            args.amount,
+            amount,
         )?,
         &[
             token_program.clone(),
@@ -55,7 +56,7 @@ pub fn process_stake<'a, 'info>(accounts: &'a [AccountInfo<'info>], data: &[u8])
     let escrow_relayer = escrow.relayer;
     drop(escrow_data);
     solana_program::program::invoke_signed(
-        &ore_api::instruction::stake(*escrow_info.key, *escrow_tokens_info.key, args.amount),
+        &ore_api::instruction::stake(*escrow_info.key, *escrow_tokens_info.key, amount),
         &[
             ore_program.clone(),
             escrow_info.clone(),

@@ -95,7 +95,7 @@ pub enum RelayInstruction {
 #[repr(C)]
 #[derive(Clone, Copy, Debug, Pod, Zeroable)]
 pub struct ClaimArgs {
-    pub amount: u64,
+    pub amount: [u8; 8],
 }
 
 #[repr(C)]
@@ -114,7 +114,7 @@ pub struct OpenRelayerArgs {
 #[repr(C)]
 #[derive(Clone, Copy, Debug, Pod, Zeroable)]
 pub struct StakeArgs {
-    pub amount: u64,
+    pub amount: [u8; 8],
 }
 
 impl RelayInstruction {
@@ -158,6 +158,45 @@ pub fn collect(signer: Pubkey, escrow: Escrow, beneficiary: Pubkey) -> Instructi
     }
 }
 
+// Builds a claim instruction.
+pub fn claim(
+    signer: Pubkey,
+    beneficiary: Pubkey,
+    relayer_authority: Pubkey,
+    amount: u64,
+) -> Instruction {
+    let (relayer_pda, _) =
+        Pubkey::find_program_address(&[RELAYER, relayer_authority.as_ref()], &crate::id());
+    let (escrow_pda, _) = Pubkey::find_program_address(
+        &[ESCROW, signer.as_ref(), relayer_pda.as_ref()],
+        &crate::id(),
+    );
+    let (proof_pda, _) =
+        Pubkey::find_program_address(&[PROOF, escrow_pda.as_ref()], &ore_api::id());
+    Instruction {
+        program_id: crate::id(),
+        accounts: vec![
+            AccountMeta::new(signer, true),
+            AccountMeta::new(beneficiary, false),
+            AccountMeta::new(escrow_pda, false),
+            AccountMeta::new(proof_pda, false),
+            AccountMeta::new_readonly(ore_api::consts::TREASURY_ADDRESS, false),
+            AccountMeta::new(ore_api::consts::TREASURY_TOKENS_ADDRESS, false),
+            AccountMeta::new_readonly(ore_api::id(), false),
+            AccountMeta::new_readonly(spl_token::id(), false),
+        ],
+        data: [
+            RelayInstruction::Claim.to_vec(),
+            ClaimArgs {
+                amount: amount.to_le_bytes(),
+            }
+            .to_bytes()
+            .to_vec(),
+        ]
+        .concat(),
+    }
+}
+
 // Builds an open_escrow instruction.
 pub fn open_escrow(signer: Pubkey, relayer: Relayer, payer: Pubkey) -> Instruction {
     let (relayer_pda, _) =
@@ -169,16 +208,6 @@ pub fn open_escrow(signer: Pubkey, relayer: Relayer, payer: Pubkey) -> Instructi
     let proof_pda = Pubkey::find_program_address(&[PROOF, escrow_pda.0.as_ref()], &ore_api::id());
     let escrow_tokens_address =
         spl_associated_token_account::get_associated_token_address(&escrow_pda.0, &MINT_ADDRESS);
-    println!("signer: {}", signer.to_string());
-    println!("escrow pda: {}", escrow_pda.0.to_string());
-    println!(
-        "escrow tokens address: {}",
-        escrow_tokens_address.to_string()
-    );
-    println!("miner: {}", relayer.miner.to_string());
-    println!("mint address: {}", MINT_ADDRESS.to_string());
-    println!("proof pda: {}", proof_pda.0.to_string());
-    println!("relayer pda: {}", relayer_pda.to_string());
     Instruction {
         program_id: crate::id(),
         accounts: vec![

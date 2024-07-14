@@ -9,6 +9,7 @@ use solana_program::{
 pub fn process_claim<'a, 'info>(accounts: &'a [AccountInfo<'info>], data: &[u8]) -> ProgramResult {
     // Parse args
     let args = ClaimArgs::try_from_bytes(data)?;
+    let amount = u64::from_le_bytes(args.amount);
 
     // Load accounts.
     let [signer, beneficiary_info, escrow_info, proof_info, treasury_info, treasury_tokens_info, ore_program, token_program] =
@@ -20,7 +21,7 @@ pub fn process_claim<'a, 'info>(accounts: &'a [AccountInfo<'info>], data: &[u8])
     load_token_account(beneficiary_info, None, &MINT_ADDRESS, true)?;
     load_escrow(escrow_info, signer.key, true)?;
     load_proof(proof_info, escrow_info.key, true)?;
-    load_treasury(treasury_info, true)?;
+    load_treasury(treasury_info, false)?;
     load_treasury_tokens(treasury_tokens_info, true)?;
     load_program(ore_program, ore_api::id())?;
     load_program(token_program, spl_token::id())?;
@@ -32,7 +33,7 @@ pub fn process_claim<'a, 'info>(accounts: &'a [AccountInfo<'info>], data: &[u8])
     let escrow_relayer = escrow.relayer;
     drop(escrow_data);
     solana_program::program::invoke_signed(
-        &ore_api::instruction::claim(*escrow_info.key, *beneficiary_info.key, args.amount),
+        &ore_api::instruction::claim(*escrow_info.key, *beneficiary_info.key, amount),
         &[
             escrow_info.clone(),
             beneficiary_info.clone(),
