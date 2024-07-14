@@ -13,7 +13,6 @@ pub enum RelayError {
 
 impl From<RelayError> for ProgramError {
     fn from(e: RelayError) -> Self {
-        let f = (e as u32) + 200;
-        ProgramError::Custom(f)
+        ProgramError::Custom(e as u32)
     }
 }

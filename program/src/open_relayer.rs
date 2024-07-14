@@ -50,7 +50,7 @@ pub fn process_open_relayer<'a, 'info>(
     let relayer = Relayer::try_from_bytes_mut(&mut relayer_data)?;
     relayer.authority = *signer.key;
     relayer.bump = args.bump as u64;
-    relayer.commission = 1_100;
+    relayer.commission = 00_000_000_013;
     relayer.miner = *miner_info.key;
 
     Ok(())
