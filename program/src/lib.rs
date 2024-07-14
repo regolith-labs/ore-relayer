@@ -47,8 +47,7 @@ pub fn process_instruction(
         RelayInstruction::OpenRelayer => process_open_relayer(accounts, data)?,
         RelayInstruction::Collect => process_collect(accounts, data)?,
         RelayInstruction::UpdateMiner => process_update_miner(accounts, data)?,
-
-        _ => {}
+        RelayInstruction::UpdateRelayer => (),
     }
 
     Ok(())
