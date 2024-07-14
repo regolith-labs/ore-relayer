@@ -95,7 +95,7 @@ pub enum RelayInstruction {
 #[repr(C)]
 #[derive(Clone, Copy, Debug, Pod, Zeroable)]
 pub struct ClaimArgs {
-    pub amount: u64,
+    pub amount: [u8; 8],
 }
 
 #[repr(C)]
@@ -114,7 +114,7 @@ pub struct OpenRelayerArgs {
 #[repr(C)]
 #[derive(Clone, Copy, Debug, Pod, Zeroable)]
 pub struct StakeArgs {
-    pub amount: u64,
+    pub amount: [u8; 8],
 }
 
 impl RelayInstruction {
@@ -187,7 +187,11 @@ pub fn claim(
         ],
         data: [
             RelayInstruction::Claim.to_vec(),
-            ClaimArgs { amount }.to_bytes().to_vec(),
+            ClaimArgs {
+                amount: amount.to_le_bytes(),
+            }
+            .to_bytes()
+            .to_vec(),
         ]
         .concat(),
     }
