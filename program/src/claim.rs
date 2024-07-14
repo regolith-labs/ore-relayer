@@ -9,7 +9,7 @@ use solana_program::{
 pub fn process_claim<'a, 'info>(accounts: &'a [AccountInfo<'info>], data: &[u8]) -> ProgramResult {
     sol_log("process claim entrypoint");
     // Parse args
-    // let args = ClaimArgs::try_from_bytes(data)?;
+    let args = ClaimArgs::try_from_bytes(data)?;
 
     // // Load accounts.
     // let [signer, beneficiary_info, escrow_info, proof_info, treasury_info, treasury_tokens_info, ore_program, token_program] =
