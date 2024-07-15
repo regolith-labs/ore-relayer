@@ -30,7 +30,6 @@ pub fn process_claim<'a, 'info>(accounts: &'a [AccountInfo<'info>], data: &[u8])
     let escrow_data = escrow_info.data.borrow();
     let escrow = Escrow::try_from_bytes(&escrow_data)?;
     let escrow_bump = escrow.bump as u8;
-    let escrow_relayer = escrow.relayer;
     drop(escrow_data);
     solana_program::program::invoke_signed(
         &ore_api::instruction::claim(*escrow_info.key, *beneficiary_info.key, amount),
@@ -42,12 +41,7 @@ pub fn process_claim<'a, 'info>(accounts: &'a [AccountInfo<'info>], data: &[u8])
             treasury_tokens_info.clone(),
             token_program.clone(),
         ],
-        &[&[
-            ESCROW,
-            signer.key.as_ref(),
-            escrow_relayer.as_ref(),
-            &[escrow_bump],
-        ]],
+        &[&[ESCROW, signer.key.as_ref(), &[escrow_bump]]],
     )?;
 
     Ok(())

@@ -1,4 +1,4 @@
-use ore_relayer_api::{consts::*, loaders::*};
+use ore_relayer_api::{consts::*, error::RelayError, loaders::*};
 use ore_utils::AccountDeserialize;
 use solana_program::{
     account_info::AccountInfo, entrypoint::ProgramResult, program_error::ProgramError,
@@ -10,15 +10,19 @@ pub fn process_update_miner<'a, 'info>(
     _data: &[u8],
 ) -> ProgramResult {
     // Load accounts.
-    let [signer, escrow_info, miner_info, proof_info, relayer_info, ore_program] = accounts else {
+    let [signer, escrow_info, miner_info, proof_info, ore_program] = accounts else {
         return Err(ProgramError::NotEnoughAccountKeys);
     };
     load_signer(signer)?;
-    load_escrow_with_relayer(escrow_info, relayer_info.key, false)?;
+    load_any_escrow(escrow_info, false)?;
     load_system_account(miner_info, false)?;
     load_proof(proof_info, escrow_info.key, true)?;
-    load_relayer(relayer_info, signer.key, false)?;
     load_program(ore_program, ore_api::id())?;
+
+    // Error if signer is not valid
+    if signer.key.ne(&AUTHORIZED_COLLECTOR) {
+        return Err(RelayError::Dummy.into());
+    }
 
     // Update the miner keypair on the proof account.
     let escrow_data = escrow_info.data.borrow();
@@ -34,12 +38,7 @@ pub fn process_update_miner<'a, 'info>(
             miner_info.clone(),
             proof_info.clone(),
         ],
-        &[&[
-            ESCROW,
-            escrow_authority.as_ref(),
-            relayer_info.key.as_ref(),
-            &[escrow_bump],
-        ]],
+        &[&[ESCROW, escrow_authority.as_ref(), &[escrow_bump]]],
     )?;
 
     Ok(())
