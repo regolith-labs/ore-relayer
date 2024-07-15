@@ -22,6 +22,17 @@ pub struct Escrow {
     pub relayer: Pubkey,
 }
 
+impl Default for Escrow {
+    fn default() -> Self {
+        Escrow {
+            authority: Pubkey::new_from_array([0; 32]),
+            bump: 0,
+            last_hash: [0; 32],
+            relayer: Pubkey::new_from_array([0; 32]),
+        }
+    }
+}
+
 impl Discriminator for Escrow {
     fn discriminator() -> u8 {
         AccountDiscriminator::Escrow.into()

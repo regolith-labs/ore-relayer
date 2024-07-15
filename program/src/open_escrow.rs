@@ -106,6 +106,7 @@ pub fn process_open_escrow<'a, 'info>(
     escrow.relayer = *relayer_info.key;
 
     // Initialize escrow tokens account
+    drop(escrow_data);
     create_ata(
         signer,
         escrow_info,
