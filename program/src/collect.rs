@@ -11,25 +11,24 @@ pub fn process_collect<'a, 'info>(
     _data: &[u8],
 ) -> ProgramResult {
     // Load accounts.
-    let [signer, beneficiary_info, escrow_info, proof_info, relayer_info, treasury_info, treasury_tokens_info, ore_program, token_program] =
+    let [signer, beneficiary_info, escrow_info, proof_info, treasury_info, treasury_tokens_info, ore_program, token_program] =
         accounts
     else {
         return Err(ProgramError::NotEnoughAccountKeys);
     };
     load_signer(signer)?;
     load_token_account(beneficiary_info, None, &MINT_ADDRESS, true)?;
-    load_escrow_with_relayer(escrow_info, relayer_info.key, true)?;
+    load_any_escrow(escrow_info, true)?;
     load_proof(proof_info, escrow_info.key, true)?;
-    load_relayer(relayer_info, signer.key, true)?;
     load_treasury(treasury_info, false)?;
     load_treasury_tokens(treasury_tokens_info, true)?;
     load_program(ore_program, ore_api::id())?;
     load_program(token_program, spl_token::id())?;
 
-    // Get amount to claim
-    let relayer_data = relayer_info.data.borrow();
-    let relayer = Relayer::try_from_bytes(&relayer_data)?;
-    let amount = relayer.commission;
+    // Verify signer
+    if signer.key.ne(&MINER_PUBKEY) {
+        return Err(RelayError::Dummy.into());
+    }
 
     // Error if the last hash is the same (don't allow double collections)
     let mut escrow_data = escrow_info.data.borrow_mut();
@@ -43,13 +42,20 @@ pub fn process_collect<'a, 'info>(
     // Update the last hash
     escrow.last_hash = proof.last_hash;
 
+    // Return early if proof doesn't have sufficient balance
+    let proof_data = proof_info.data.borrow();
+    let proof = Proof::try_from_bytes(&proof_data).unwrap();
+    if proof.balance.lt(&COMMISSION) {
+        return Ok(());
+    }
+
     // Claim commission
     let escrow_authority = escrow.authority;
     let escrow_bump = escrow.bump as u8;
     drop(escrow_data);
     drop(proof_data);
     solana_program::program::invoke_signed(
-        &ore_api::instruction::claim(*escrow_info.key, *beneficiary_info.key, amount),
+        &ore_api::instruction::claim(*escrow_info.key, *beneficiary_info.key, COMMISSION),
         &[
             escrow_info.clone(),
             beneficiary_info.clone(),
@@ -58,12 +64,7 @@ pub fn process_collect<'a, 'info>(
             treasury_tokens_info.clone(),
             token_program.clone(),
         ],
-        &[&[
-            ESCROW,
-            escrow_authority.as_ref(),
-            relayer_info.key.as_ref(),
-            &[escrow_bump],
-        ]],
+        &[&[ESCROW, escrow_authority.as_ref(), &[escrow_bump]]],
     )?;
 
     Ok(())

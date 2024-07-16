@@ -24,7 +24,6 @@ pub fn process_close_escrow<'a, 'info>(
     let escrow_data = escrow_info.data.borrow();
     let escrow = Escrow::try_from_bytes(&escrow_data)?;
     let escrow_bump = escrow.bump as u8;
-    let escrow_relayer = escrow.relayer;
     drop(escrow_data);
     solana_program::program::invoke_signed(
         &ore_api::instruction::close(*escrow_info.key),
@@ -33,12 +32,7 @@ pub fn process_close_escrow<'a, 'info>(
             proof_info.clone(),
             system_program.clone(),
         ],
-        &[&[
-            ESCROW,
-            signer.key.as_ref(),
-            escrow_relayer.as_ref(),
-            &[escrow_bump],
-        ]],
+        &[&[ESCROW, signer.key.as_ref(), &[escrow_bump]]],
     )?;
 
     // Realloc data to zero

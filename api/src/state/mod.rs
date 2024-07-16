@@ -1,8 +1,8 @@
 mod escrow;
-mod relayer;
+// mod relayer;
 
 pub use escrow::*;
-pub use relayer::*;
+// pub use relayer::*;
 
 use num_enum::{IntoPrimitive, TryFromPrimitive};
 
@@ -10,5 +10,5 @@ use num_enum::{IntoPrimitive, TryFromPrimitive};
 #[derive(Clone, Copy, Debug, Eq, PartialEq, IntoPrimitive, TryFromPrimitive)]
 pub enum AccountDiscriminator {
     Escrow = 100,
-    Relayer = 101,
+    // Relayer = 101,
 }

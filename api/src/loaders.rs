@@ -1,4 +1,4 @@
-use ore_utils::{AccountDeserialize, Discriminator};
+use ore_utils::AccountDeserialize;
 use solana_program::{account_info::AccountInfo, program_error::ProgramError, pubkey::Pubkey};
 
 pub use crate::state::*;
@@ -41,11 +41,10 @@ pub fn load_escrow<'a, 'info>(
 /// - Owner is not relay program.
 /// - Data is empty.
 /// - Account cannot be parsed to a escrow account.
-/// - Escrow relayer is not expected value.
+/// - Escrow authority is not expected value.
 /// - Expected to be writable, but is not.
-pub fn load_escrow_with_relayer<'a, 'info>(
+pub fn load_any_escrow<'a, 'info>(
     info: &'a AccountInfo<'info>,
-    relayer: &Pubkey,
     is_writable: bool,
 ) -> Result<(), ProgramError> {
     if info.owner.ne(&crate::id()) {
@@ -57,72 +56,7 @@ pub fn load_escrow_with_relayer<'a, 'info>(
     }
 
     let escrow_data = info.data.borrow();
-    let escrow = Escrow::try_from_bytes(&escrow_data)?;
-
-    if escrow.relayer.ne(&relayer) {
-        return Err(ProgramError::InvalidAccountData);
-    }
-
-    if is_writable && !info.is_writable {
-        return Err(ProgramError::InvalidAccountData);
-    }
-
-    Ok(())
-}
-
-/// Errors if:
-/// - Owner is not relay program.
-/// - Data is empty.
-/// - Account cannot be parsed to a relayer account.
-/// - Relayer authority is not expected value.
-/// - Expected to be writable, but is not.
-pub fn load_relayer<'a, 'info>(
-    info: &'a AccountInfo<'info>,
-    authority: &Pubkey,
-    is_writable: bool,
-) -> Result<(), ProgramError> {
-    if info.owner.ne(&crate::id()) {
-        return Err(ProgramError::InvalidAccountOwner);
-    }
-
-    if info.data_is_empty() {
-        return Err(ProgramError::UninitializedAccount);
-    }
-
-    let relayer_data = info.data.borrow();
-    let relayer = Relayer::try_from_bytes(&relayer_data)?;
-
-    if relayer.authority.ne(&authority) {
-        return Err(ProgramError::InvalidAccountData);
-    }
-
-    if is_writable && !info.is_writable {
-        return Err(ProgramError::InvalidAccountData);
-    }
-
-    Ok(())
-}
-
-/// Errors if:
-/// - Owner is not relay program.
-/// - Data is empty.
-/// - Account discriminator is not a relayer account.
-/// - Expected to be writable, but is not.
-pub fn load_any_relayer<'a, 'info>(
-    info: &'a AccountInfo<'info>,
-    is_writable: bool,
-) -> Result<(), ProgramError> {
-    if info.owner.ne(&crate::id()) {
-        return Err(ProgramError::InvalidAccountOwner);
-    }
-
-    if info.data_is_empty() {
-        return Err(ProgramError::UninitializedAccount);
-    }
-
-    if info.data.borrow()[0].ne(&(Relayer::discriminator() as u8)) {
-        return Err(solana_program::program_error::ProgramError::InvalidAccountData);
-    }
+    let _ = Escrow::try_from_bytes(&escrow_data)?;
 
     if is_writable && !info.is_writable {
         return Err(ProgramError::InvalidAccountData);
