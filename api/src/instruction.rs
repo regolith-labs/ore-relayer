@@ -157,6 +157,38 @@ pub fn claim(signer: Pubkey, beneficiary: Pubkey, amount: u64) -> Instruction {
     }
 }
 
+// Builds a stake instruction.
+pub fn stake(signer: Pubkey, sender: Pubkey, amount: u64) -> Instruction {
+    let (escrow_pda, _) = Pubkey::find_program_address(&[ESCROW, signer.as_ref()], &crate::id());
+    let escrow_tokens =
+        spl_associated_token_account::get_associated_token_address(&escrow_pda, &MINT_ADDRESS);
+    let (proof_pda, _) =
+        Pubkey::find_program_address(&[PROOF, escrow_pda.as_ref()], &ore_api::id());
+    Instruction {
+        program_id: crate::id(),
+        accounts: vec![
+            AccountMeta::new(signer, true),
+            AccountMeta::new(escrow_pda, false),
+            AccountMeta::new(escrow_tokens, false),
+            AccountMeta::new(proof_pda, false),
+            AccountMeta::new(sender, false),
+            AccountMeta::new_readonly(ore_api::consts::TREASURY_ADDRESS, false),
+            AccountMeta::new(ore_api::consts::TREASURY_TOKENS_ADDRESS, false),
+            AccountMeta::new_readonly(ore_api::id(), false),
+            AccountMeta::new_readonly(spl_token::id(), false),
+        ],
+        data: [
+            RelayInstruction::Stake.to_vec(),
+            StakeArgs {
+                amount: amount.to_le_bytes(),
+            }
+            .to_bytes()
+            .to_vec(),
+        ]
+        .concat(),
+    }
+}
+
 // Builds an open_escrow instruction.
 pub fn open_escrow(signer: Pubkey, payer: Pubkey) -> Instruction {
     let escrow_pda = Pubkey::find_program_address(&[ESCROW, signer.as_ref()], &crate::id());
