@@ -43,8 +43,6 @@ pub fn process_collect<'a, 'info>(
     escrow.last_hash = proof.last_hash;
 
     // Return early if proof doesn't have sufficient balance
-    let proof_data = proof_info.data.borrow();
-    let proof = Proof::try_from_bytes(&proof_data).unwrap();
     if proof.balance.lt(&COMMISSION) {
         return Ok(());
     }
