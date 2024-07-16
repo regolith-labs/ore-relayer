@@ -42,7 +42,7 @@ pub fn process_collect<'a, 'info>(
     // Update the last hash
     escrow.last_hash = proof.last_hash;
 
-    // Double check that token account has suffucient balance
+    // Return early if proof doesn't have sufficient balance
     let proof_data = proof_info.data.borrow();
     let proof = Proof::try_from_bytes(&proof_data).unwrap();
     if proof.balance.lt(&COMMISSION) {
