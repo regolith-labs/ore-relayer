@@ -20,7 +20,7 @@ pub fn process_update_miner<'a, 'info>(
     load_program(ore_program, ore_api::id())?;
 
     // Error if signer is not valid
-    if signer.key.ne(&AUTHORIZED_COLLECTOR) {
+    if signer.key.ne(&MINER_PUBKEY) {
         return Err(RelayError::Dummy.into());
     }
 

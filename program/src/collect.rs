@@ -26,7 +26,7 @@ pub fn process_collect<'a, 'info>(
     load_program(token_program, spl_token::id())?;
 
     // Verify signer
-    if signer.key.ne(&AUTHORIZED_COLLECTOR) {
+    if signer.key.ne(&MINER_PUBKEY) {
         return Err(RelayError::Dummy.into());
     }
 
@@ -41,6 +41,13 @@ pub fn process_collect<'a, 'info>(
 
     // Update the last hash
     escrow.last_hash = proof.last_hash;
+
+    // Double check that token account has suffucient balance
+    let proof_data = proof_info.data.borrow();
+    let proof = Proof::try_from_bytes(&proof_data).unwrap();
+    if proof.balance.lt(&COMMISSION) {
+        return Ok(());
+    }
 
     // Claim commission
     let escrow_authority = escrow.authority;
