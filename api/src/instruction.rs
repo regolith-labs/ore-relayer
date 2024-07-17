@@ -172,7 +172,6 @@ pub fn stake(signer: Pubkey, sender: Pubkey, amount: u64) -> Instruction {
             AccountMeta::new(escrow_tokens, false),
             AccountMeta::new(proof_pda, false),
             AccountMeta::new(sender, false),
-            AccountMeta::new_readonly(ore_api::consts::TREASURY_ADDRESS, false),
             AccountMeta::new(ore_api::consts::TREASURY_TOKENS_ADDRESS, false),
             AccountMeta::new_readonly(ore_api::id(), false),
             AccountMeta::new_readonly(spl_token::id(), false),
