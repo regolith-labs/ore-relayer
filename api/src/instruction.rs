@@ -2,7 +2,6 @@ use bytemuck::{Pod, Zeroable};
 use num_enum::TryFromPrimitive;
 use ore_api::consts::*;
 use ore_utils::{impl_instruction_from_bytes, impl_to_bytes};
-use shank::ShankInstruction;
 use solana_program::{
     instruction::{AccountMeta, Instruction},
     pubkey::Pubkey,
@@ -12,64 +11,15 @@ use solana_program::{
 use crate::{consts::*, state::Escrow};
 
 #[repr(u8)]
-#[derive(Clone, Copy, Debug, Eq, PartialEq, ShankInstruction, TryFromPrimitive)]
+#[derive(Clone, Copy, Debug, Eq, PartialEq,  TryFromPrimitive)]
 #[rustfmt::skip]
 pub enum RelayInstruction {
-    #[account(0, name = "relay_program", desc = "Relay program")]
-    #[account(1, name = "signer", desc = "Signer", signer)]
-    #[account(2, name = "beneficiary", desc = "Beneficiary token account", writable)]
-    #[account(3, name = "escrow", desc = "Escrow account", writable)]
-    #[account(4, name = "proof", desc = "ORE proof account", writable)]
-    #[account(5, name = "treasury", desc = "ORE treasury account", writable)]
-    #[account(6, name = "treasury_tokens", desc = "ORE treasury token account", writable)]
-    #[account(7, name = "ore_program", desc = "ORE program")]
-    #[account(8, name = "token_program", desc = "SPL token program")]
     Claim = 0, 
-
-    #[account(0, name = "relay_program", desc = "Relay program")]
-    #[account(1, name = "signer", desc = "Signer", signer)]
-    #[account(2, name = "proof", desc = "ORE proof account", writable)]
-    #[account(3, name = "ore_program", desc = "ORE program")]
-    #[account(4, name = "system_program", desc = "Solana system program")]
     CloseEscrow = 1,
-
-    #[account(0, name = "relay_program", desc = "Relay program")]
-    #[account(1, name = "signer", desc = "Signer", signer)]
-    #[account(2, name = "escrow", desc = "Escrow account to be created", writable)]
-    #[account(3, name = "escrow_tokens", desc = "Escrow token account to be created", writable)]
-    #[account(4, name = "miner", desc = "Miner authority")]
-    #[account(5, name = "proof", desc = "ORE proof account to be created", writable)]
-    #[account(6, name = "ore_program", desc = "ORE program")]
-    #[account(7, name = "system_program", desc = "Solana system program")]
-    #[account(8, name = "slot_hash_sysvar", desc = "Solana slot hash sysvar")]
     OpenEscrow = 2,
-
-    #[account(0, name = "relay_program", desc = "Relay program")]
-    #[account(1, name = "signer", desc = "Signer", signer)]
-    #[account(2, name = "escrow", desc = "Escrow account", writable)]
-    #[account(3, name = "escrow_tokens", desc = "Escrow token account", writable)]
-    #[account(4, name = "proof", desc = "ORE proof account", writable)]
-    #[account(5, name = "treasury_tokens", desc = "ORE treasury token account", writable)]
-    #[account(6, name = "ore_program", desc = "ORE program")]
-    #[account(7, name = "token_program", desc = "SPL token program")]
     Stake = 3,
 
-    #[account(0, name = "relay_program", desc = "Relay program")]
-    #[account(1, name = "signer", desc = "Signer", signer)]
-    #[account(2, name = "beneficiary", desc = "Beneficiary token account", writable)]
-    #[account(3, name = "escrow", desc = "Escrow account", writable)]
-    #[account(4, name = "proof", desc = "ORE proof account", writable)]
-    #[account(5, name = "treasury", desc = "ORE treasury account", writable)]
-    #[account(6, name = "treasury_tokens", desc = "ORE treasury token account", writable)]
-    #[account(7, name = "ore_program", desc = "ORE program")]
-    #[account(8, name = "token_program", desc = "SPL token program")]
     Collect = 101, 
-
-    #[account(0, name = "relay_program", desc = "Relay program")]
-    #[account(1, name = "signer", desc = "Signer", signer)]
-    #[account(2, name = "miner", desc = "Miner authority")]
-    #[account(3, name = "proof", desc = "ORE proof account", writable)]
-    #[account(4, name = "ore_program", desc = "ORE program")]
     UpdateMiner = 102, 
 }
 

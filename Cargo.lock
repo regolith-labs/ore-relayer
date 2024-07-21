@@ -1355,7 +1355,6 @@ dependencies = [
  "num_enum 0.7.2",
  "ore-api",
  "ore-utils",
- "shank",
  "solana-program",
  "spl-associated-token-account",
  "spl-token",

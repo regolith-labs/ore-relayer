@@ -1,13 +1,12 @@
 use bytemuck::{Pod, Zeroable};
 use ore_utils::{impl_account_from_bytes, impl_to_bytes, Discriminator};
-use shank::ShankAccount;
 use solana_program::pubkey::Pubkey;
 
 use super::AccountDiscriminator;
 
 /// Escrow account
 #[repr(C)]
-#[derive(Clone, Copy, Debug, PartialEq, Pod, ShankAccount, Zeroable)]
+#[derive(Clone, Copy, Debug, PartialEq, Pod, Zeroable)]
 pub struct Escrow {
     /// The signer authorized to use this relay account.
     pub authority: Pubkey,
