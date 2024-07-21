@@ -31,6 +31,12 @@ pub struct ClaimArgs {
 
 #[repr(C)]
 #[derive(Clone, Copy, Debug, Pod, Zeroable)]
+pub struct CollectArgs {
+    pub fee: [u8; 8],
+}
+
+#[repr(C)]
+#[derive(Clone, Copy, Debug, Pod, Zeroable)]
 pub struct OpenEscrowArgs {
     pub escrow_bump: u8,
     pub proof_bump: u8,
@@ -49,15 +55,17 @@ impl RelayInstruction {
 }
 
 impl_to_bytes!(ClaimArgs);
+impl_to_bytes!(CollectArgs);
 impl_to_bytes!(OpenEscrowArgs);
 impl_to_bytes!(StakeArgs);
 
 impl_instruction_from_bytes!(ClaimArgs);
+impl_instruction_from_bytes!(CollectArgs);
 impl_instruction_from_bytes!(OpenEscrowArgs);
 impl_instruction_from_bytes!(StakeArgs);
 
 // Builds a collect instruction.
-pub fn collect(signer: Pubkey, escrow: Escrow, beneficiary: Pubkey) -> Instruction {
+pub fn collect(signer: Pubkey, escrow: Escrow, beneficiary: Pubkey, sol_fee: u64) -> Instruction {
     let (escrow_pda, _) =
         Pubkey::find_program_address(&[ESCROW, escrow.authority.as_ref()], &crate::id());
     let (proof_pda, _) =
@@ -67,6 +75,7 @@ pub fn collect(signer: Pubkey, escrow: Escrow, beneficiary: Pubkey) -> Instructi
         accounts: vec![
             AccountMeta::new(signer, true),
             AccountMeta::new(beneficiary, false),
+            AccountMeta::new(COLLECTOR_ADDRESS, false),
             AccountMeta::new(escrow_pda, false),
             AccountMeta::new(proof_pda, false),
             AccountMeta::new_readonly(ore_api::consts::TREASURY_ADDRESS, false),
@@ -74,7 +83,15 @@ pub fn collect(signer: Pubkey, escrow: Escrow, beneficiary: Pubkey) -> Instructi
             AccountMeta::new_readonly(ore_api::id(), false),
             AccountMeta::new_readonly(spl_token::id(), false),
         ],
-        data: RelayInstruction::Collect.to_vec(),
+        data: vec![
+            RelayInstruction::Collect.to_vec(),
+            CollectArgs {
+                fee: sol_fee.to_le_bytes(),
+            }
+            .to_bytes()
+            .to_vec(),
+        ]
+        .concat(),
     }
 }
 

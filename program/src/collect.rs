@@ -1,5 +1,5 @@
 use ore_api::{consts::MINT_ADDRESS, state::Proof};
-use ore_relayer_api::{consts::*, error::RelayError, loaders::*};
+use ore_relayer_api::{consts::*, error::RelayError, instruction::CollectArgs, loaders::*};
 use ore_utils::AccountDeserialize;
 use solana_program::{
     account_info::AccountInfo, entrypoint::ProgramResult, program_error::ProgramError,
@@ -8,16 +8,21 @@ use solana_program::{
 /// Collects commission from a miner.
 pub fn process_collect<'a, 'info>(
     accounts: &'a [AccountInfo<'info>],
-    _data: &[u8],
+    data: &[u8],
 ) -> ProgramResult {
+    // Parse args
+    let args = CollectArgs::try_from_bytes(data)?;
+    let fee = u64::from_le_bytes(args.fee);
+
     // Load accounts.
-    let [signer, beneficiary_info, escrow_info, proof_info, treasury_info, treasury_tokens_info, ore_program, token_program] =
+    let [signer, beneficiary_info, collector_info, escrow_info, proof_info, treasury_info, treasury_tokens_info, ore_program, token_program] =
         accounts
     else {
         return Err(ProgramError::NotEnoughAccountKeys);
     };
     load_signer(signer)?;
     load_token_account(beneficiary_info, None, &MINT_ADDRESS, true)?;
+    load_account(collector_info, COLLECTOR_ADDRESS, true)?;
     load_any_escrow(escrow_info, true)?;
     load_proof(proof_info, escrow_info.key, true)?;
     load_treasury(treasury_info, false)?;
@@ -46,6 +51,10 @@ pub fn process_collect<'a, 'info>(
     if proof.balance.lt(&COMMISSION) {
         return Ok(());
     }
+
+    // Send fee to miner
+    **collector_info.lamports.borrow_mut() += fee;
+    **escrow_info.lamports.borrow_mut() -= fee;
 
     // Claim commission
     let escrow_authority = escrow.authority;
