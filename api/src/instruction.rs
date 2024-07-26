@@ -8,7 +8,7 @@ use solana_program::{
     system_program, sysvar,
 };
 
-use crate::{consts::*, state::Escrow};
+use crate::consts::*;
 
 #[repr(u8)]
 #[derive(Clone, Copy, Debug, Eq, PartialEq,  TryFromPrimitive)]
