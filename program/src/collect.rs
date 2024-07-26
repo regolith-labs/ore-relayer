@@ -15,14 +15,13 @@ pub fn process_collect<'a, 'info>(
     let fee = u64::from_le_bytes(args.fee);
 
     // Load accounts.
-    let [signer, beneficiary_info, collector_info, escrow_info, proof_info, treasury_info, treasury_tokens_info, ore_program, token_program] =
+    let [signer, beneficiary_info, escrow_info, proof_info, treasury_info, treasury_tokens_info, ore_program, token_program] =
         accounts
     else {
         return Err(ProgramError::NotEnoughAccountKeys);
     };
     load_signer(signer)?;
     load_token_account(beneficiary_info, None, &MINT_ADDRESS, true)?;
-    load_account(collector_info, COLLECTOR_ADDRESS, true)?;
     load_any_escrow(escrow_info, true)?;
     load_proof(proof_info, escrow_info.key, true)?;
     load_treasury(treasury_info, false)?;
@@ -53,8 +52,8 @@ pub fn process_collect<'a, 'info>(
     }
 
     // Send fee to miner
-    **collector_info.lamports.borrow_mut() += fee;
-    **escrow_info.lamports.borrow_mut() -= fee;
+    **escrow_info.try_borrow_mut_lamports()? -= fee;
+    **signer.try_borrow_mut_lamports()? += fee;
 
     // Claim commission
     let escrow_authority = escrow.authority;
