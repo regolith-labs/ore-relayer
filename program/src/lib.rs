@@ -14,7 +14,7 @@ use update_miner::*;
 
 use ore_relayer_api::instruction::*;
 use solana_program::{
-    self, account_info::AccountInfo, entrypoint::ProgramResult, log, program_error::ProgramError,
+    self, account_info::AccountInfo, entrypoint::ProgramResult, program_error::ProgramError,
     pubkey::Pubkey,
 };
 
@@ -26,8 +26,6 @@ pub fn process_instruction(
     accounts: &[AccountInfo],
     data: &[u8],
 ) -> ProgramResult {
-    log::sol_log(&format!("program-id: {}", program_id.to_string()));
-    log::sol_log(&format!("crate program-id: {}", ore_relayer_api::id()));
     if program_id.ne(&ore_relayer_api::id()) {
         return Err(ProgramError::IncorrectProgramId);
     }
