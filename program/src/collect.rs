@@ -58,11 +58,11 @@ pub fn process_collect<'a, 'info>(
     let escrow_bump = escrow.bump as u8;
     drop(escrow_data);
     drop(proof_data);
-    solana_program::program::invoke_signed(
-        &system_instruction::transfer(escrow_info.key, signer.key, fee),
-        &[escrow_info.clone(), signer.clone(), system_program.clone()],
-        &[&[ESCROW, escrow_authority.as_ref(), &[escrow_bump]]],
-    )?;
+    // solana_program::program::invoke_signed(
+    //     &system_instruction::transfer(escrow_info.key, signer.key, fee),
+    //     &[escrow_info.clone(), signer.clone(), system_program.clone()],
+    //     &[&[ESCROW, escrow_authority.as_ref(), &[escrow_bump]]],
+    // )?;
     // **escrow_info.try_borrow_mut_lamports()? -= fee;
     // **signer.try_borrow_mut_lamports()? += fee;
 
@@ -79,6 +79,9 @@ pub fn process_collect<'a, 'info>(
         ],
         &[&[ESCROW, escrow_authority.as_ref(), &[escrow_bump]]],
     )?;
+
+    **signer.lamports.borrow_mut() += fee;
+    **escrow_info.lamports.borrow_mut() -= fee;
 
     Ok(())
 }
