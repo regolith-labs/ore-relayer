@@ -3,7 +3,7 @@ use ore_relayer_api::{consts::*, error::RelayError, instruction::CollectArgs, lo
 use ore_utils::AccountDeserialize;
 use solana_program::{
     account_info::AccountInfo, entrypoint::ProgramResult, program_error::ProgramError,
-    system_instruction,
+    system_instruction, system_program,
 };
 
 /// Collects commission from a miner.
@@ -16,7 +16,7 @@ pub fn process_collect<'a, 'info>(
     let fee = u64::from_le_bytes(args.fee);
 
     // Load accounts.
-    let [signer, beneficiary_info, escrow_info, proof_info, treasury_info, treasury_tokens_info, ore_program, token_program] =
+    let [signer, beneficiary_info, escrow_info, proof_info, treasury_info, treasury_tokens_info, system_program, ore_program, token_program] =
         accounts
     else {
         return Err(ProgramError::NotEnoughAccountKeys);
@@ -27,6 +27,7 @@ pub fn process_collect<'a, 'info>(
     load_proof(proof_info, escrow_info.key, true)?;
     load_treasury(treasury_info, false)?;
     load_treasury_tokens(treasury_tokens_info, true)?;
+    load_program(system_program, system_program::id())?;
     load_program(ore_program, ore_api::id())?;
     load_program(token_program, spl_token::id())?;
 
@@ -57,11 +58,11 @@ pub fn process_collect<'a, 'info>(
     let escrow_bump = escrow.bump as u8;
     drop(escrow_data);
     drop(proof_data);
-    // solana_program::program::invoke_signed(
-    //     &system_instruction::transfer(escrow_info.key, signer.key, fee),
-    //     &[escrow_info.clone(), signer.clone()],
-    //     &[&[ESCROW, escrow_authority.as_ref(), &[escrow_bump]]],
-    // )?;
+    solana_program::program::invoke_signed(
+        &system_instruction::transfer(escrow_info.key, signer.key, fee),
+        &[escrow_info.clone(), signer.clone(), system_program.clone()],
+        &[&[ESCROW, escrow_authority.as_ref(), &[escrow_bump]]],
+    )?;
     // **escrow_info.try_borrow_mut_lamports()? -= fee;
     // **signer.try_borrow_mut_lamports()? += fee;
 
