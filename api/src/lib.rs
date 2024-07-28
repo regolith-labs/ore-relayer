@@ -9,4 +9,4 @@ pub(crate) use ore_utils as utils;
 use solana_program::declare_id;
 
 // TODO
-declare_id!("37NiLubGML8XfHf31AYgfRktGpeUWvykQN5sg8cFQypi");
+declare_id!("DhG9f9AqK6uRaAVvGd5nBuLyjMr9U2oLSPEBe3Jb3SL4");
