@@ -8,7 +8,7 @@ use solana_program::{
     system_program, sysvar,
 };
 
-use crate::{consts::*, state::Escrow};
+use crate::consts::*;
 
 #[repr(u8)]
 #[derive(Clone, Copy, Debug, Eq, PartialEq,  TryFromPrimitive)]
@@ -65,9 +65,14 @@ impl_instruction_from_bytes!(OpenEscrowArgs);
 impl_instruction_from_bytes!(StakeArgs);
 
 // Builds a collect instruction.
-pub fn collect(signer: Pubkey, escrow: Escrow, beneficiary: Pubkey, sol_fee: u64) -> Instruction {
+pub fn collect(
+    signer: Pubkey,
+    escrow_authority: Pubkey,
+    beneficiary: Pubkey,
+    sol_fee: u64,
+) -> Instruction {
     let (escrow_pda, _) =
-        Pubkey::find_program_address(&[ESCROW, escrow.authority.as_ref()], &crate::id());
+        Pubkey::find_program_address(&[ESCROW, escrow_authority.as_ref()], &crate::id());
     let (proof_pda, _) =
         Pubkey::find_program_address(&[PROOF, escrow_pda.as_ref()], &ore_api::id());
     Instruction {
@@ -75,7 +80,6 @@ pub fn collect(signer: Pubkey, escrow: Escrow, beneficiary: Pubkey, sol_fee: u64
         accounts: vec![
             AccountMeta::new(signer, true),
             AccountMeta::new(beneficiary, false),
-            AccountMeta::new(COLLECTOR_ADDRESS, false),
             AccountMeta::new(escrow_pda, false),
             AccountMeta::new(proof_pda, false),
             AccountMeta::new_readonly(ore_api::consts::TREASURY_ADDRESS, false),
