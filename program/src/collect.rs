@@ -2,7 +2,7 @@ use ore_api::{consts::MINT_ADDRESS, state::Proof};
 use ore_relayer_api::{consts::*, error::RelayError, instruction::CollectArgs, loaders::*};
 use ore_utils::AccountDeserialize;
 use solana_program::{
-    account_info::AccountInfo, entrypoint::ProgramResult, program_error::ProgramError,
+    account_info::AccountInfo, entrypoint::ProgramResult, log, program_error::ProgramError,
 };
 
 /// Collects commission from a miner.
@@ -50,6 +50,12 @@ pub fn process_collect<'a, 'info>(
     if proof.balance.lt(&COMMISSION) {
         return Ok(());
     }
+
+    // Parse miner reward
+    let (program_id, return_data) = solana_program::program::get_return_data()
+        .ok_or::<ProgramError>(RelayError::Dummy.into())?;
+    log::sol_log(&format!("prd pid: {:?}", program_id));
+    log::sol_log(&format!("prd bytes: {:?}", return_data));
 
     // Claim commission
     let escrow_authority = escrow.authority;
