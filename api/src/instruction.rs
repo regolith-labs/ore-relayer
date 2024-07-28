@@ -84,7 +84,6 @@ pub fn collect(
             AccountMeta::new(proof_pda, false),
             AccountMeta::new_readonly(ore_api::consts::TREASURY_ADDRESS, false),
             AccountMeta::new(ore_api::consts::TREASURY_TOKENS_ADDRESS, false),
-            AccountMeta::new_readonly(system_program::id(), false),
             AccountMeta::new_readonly(ore_api::id(), false),
             AccountMeta::new_readonly(spl_token::id(), false),
         ],
