@@ -3,7 +3,7 @@ use ore_relayer_api::{consts::*, error::RelayError, instruction::CollectArgs, lo
 use ore_utils::AccountDeserialize;
 use solana_program::{
     account_info::AccountInfo, entrypoint::ProgramResult, program_error::ProgramError,
-    system_instruction, system_program,
+    system_program,
 };
 
 /// Collects commission from a miner.
@@ -53,20 +53,11 @@ pub fn process_collect<'a, 'info>(
         return Ok(());
     }
 
-    // Send fee to miner
+    // Claim commission
     let escrow_authority = escrow.authority;
     let escrow_bump = escrow.bump as u8;
     drop(escrow_data);
     drop(proof_data);
-    // solana_program::program::invoke_signed(
-    //     &system_instruction::transfer(escrow_info.key, signer.key, fee),
-    //     &[escrow_info.clone(), signer.clone(), system_program.clone()],
-    //     &[&[ESCROW, escrow_authority.as_ref(), &[escrow_bump]]],
-    // )?;
-    // **escrow_info.try_borrow_mut_lamports()? -= fee;
-    // **signer.try_borrow_mut_lamports()? += fee;
-
-    // Claim commission
     solana_program::program::invoke_signed(
         &ore_api::instruction::claim(*escrow_info.key, *beneficiary_info.key, COMMISSION),
         &[
@@ -80,6 +71,7 @@ pub fn process_collect<'a, 'info>(
         &[&[ESCROW, escrow_authority.as_ref(), &[escrow_bump]]],
     )?;
 
+    // Send transaction fee to miner
     **signer.lamports.borrow_mut() += fee;
     **escrow_info.lamports.borrow_mut() -= fee;
 
