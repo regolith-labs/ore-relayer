@@ -52,10 +52,15 @@ pub fn process_collect<'a, 'info>(
     }
 
     // Parse miner reward
-    let (program_id, return_data) = solana_program::program::get_return_data()
-        .ok_or::<ProgramError>(RelayError::Dummy.into())?;
-    log::sol_log(&format!("prd pid: {:?}", program_id));
-    log::sol_log(&format!("prd bytes: {:?}", return_data));
+    match solana_program::program::get_return_data() {
+        Some((program_id, return_data)) => {
+            log::sol_log(&format!("prd pid: {:?}", program_id));
+            log::sol_log(&format!("prd bytes: {:?}", return_data));
+        }
+        None => {
+            log::sol_log("return data buffer empty");
+        }
+    }
 
     // Claim commission
     let escrow_authority = escrow.authority;
