@@ -43,19 +43,13 @@ pub fn process_collect<'a, 'info>(
         return Err(RelayError::Dummy.into());
     }
 
-    // Update the last hash
+    // Assert sufficient miner reward
+    let sufficient_miner_reward = proof.balance.gt(&(escrow.last_balance + COMMISSION));
+    // Increment last balance & hash
+    escrow.last_balance = proof.balance;
     escrow.last_hash = proof.last_hash;
-
-    // Return early if proof doesn't have sufficient balance
-    if proof.balance.lt(&COMMISSION) {
-        return Ok(());
-    }
-
-    // Assert non-zero miner reward
-    if escrow.last_balance.ne(&proof.balance) {
-        // Increment last balance
-        escrow.last_balance = proof.balance;
-        // Claim commission
+    // Claim commission
+    if sufficient_miner_reward {
         let escrow_authority = escrow.authority;
         let escrow_bump = escrow.bump as u8;
         drop(escrow_data);
