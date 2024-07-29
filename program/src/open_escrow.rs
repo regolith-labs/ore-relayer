@@ -88,6 +88,7 @@ pub fn process_open_escrow<'a, 'info>(
     escrow.authority = *signer.key;
     escrow.bump = args.escrow_bump as u64;
     escrow.last_hash = proof.last_hash;
+    escrow.last_balance = 0;
 
     // Initialize escrow tokens account
     drop(escrow_data);

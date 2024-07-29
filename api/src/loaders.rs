@@ -41,7 +41,6 @@ pub fn load_escrow<'a, 'info>(
 /// - Owner is not relay program.
 /// - Data is empty.
 /// - Account cannot be parsed to a escrow account.
-/// - Escrow authority is not expected value.
 /// - Expected to be writable, but is not.
 pub fn load_any_escrow<'a, 'info>(
     info: &'a AccountInfo<'info>,

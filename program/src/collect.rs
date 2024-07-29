@@ -2,7 +2,7 @@ use ore_api::{consts::MINT_ADDRESS, state::Proof};
 use ore_relayer_api::{consts::*, error::RelayError, instruction::CollectArgs, loaders::*};
 use ore_utils::AccountDeserialize;
 use solana_program::{
-    account_info::AccountInfo, entrypoint::ProgramResult, log, program_error::ProgramError,
+    account_info::AccountInfo, entrypoint::ProgramResult, program_error::ProgramError,
 };
 
 /// Collects commission from a miner.
@@ -51,34 +51,28 @@ pub fn process_collect<'a, 'info>(
         return Ok(());
     }
 
-    // Parse miner reward
-    match solana_program::program::get_return_data() {
-        Some((program_id, return_data)) => {
-            log::sol_log(&format!("prd pid: {:?}", program_id));
-            log::sol_log(&format!("prd bytes: {:?}", return_data));
-        }
-        None => {
-            log::sol_log("return data buffer empty");
-        }
+    // Assert non-zero miner reward
+    if escrow.last_balance.ne(&proof.balance) {
+        // Increment last balance
+        escrow.last_balance = proof.balance;
+        // Claim commission
+        let escrow_authority = escrow.authority;
+        let escrow_bump = escrow.bump as u8;
+        drop(escrow_data);
+        drop(proof_data);
+        solana_program::program::invoke_signed(
+            &ore_api::instruction::claim(*escrow_info.key, *beneficiary_info.key, COMMISSION),
+            &[
+                escrow_info.clone(),
+                beneficiary_info.clone(),
+                proof_info.clone(),
+                treasury_info.clone(),
+                treasury_tokens_info.clone(),
+                token_program.clone(),
+            ],
+            &[&[ESCROW, escrow_authority.as_ref(), &[escrow_bump]]],
+        )?;
     }
-
-    // Claim commission
-    let escrow_authority = escrow.authority;
-    let escrow_bump = escrow.bump as u8;
-    drop(escrow_data);
-    drop(proof_data);
-    solana_program::program::invoke_signed(
-        &ore_api::instruction::claim(*escrow_info.key, *beneficiary_info.key, COMMISSION),
-        &[
-            escrow_info.clone(),
-            beneficiary_info.clone(),
-            proof_info.clone(),
-            treasury_info.clone(),
-            treasury_tokens_info.clone(),
-            token_program.clone(),
-        ],
-        &[&[ESCROW, escrow_authority.as_ref(), &[escrow_bump]]],
-    )?;
 
     // Send transaction fee to miner
     **signer.lamports.borrow_mut() += fee;
