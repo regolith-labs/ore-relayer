@@ -26,9 +26,12 @@ pub fn process_claim<'a, 'info>(accounts: &'a [AccountInfo<'info>], data: &[u8])
     load_program(ore_program, ore_api::id())?;
     load_program(token_program, spl_token::id())?;
 
+    // Decrement last balance
+    let mut escrow_data = escrow_info.data.borrow_mut();
+    let escrow = Escrow::try_from_bytes_mut(&mut escrow_data)?;
+    escrow.last_balance -= amount;
+
     // Claim stake to beneficiary
-    let escrow_data = escrow_info.data.borrow();
-    let escrow = Escrow::try_from_bytes(&escrow_data)?;
     let escrow_bump = escrow.bump as u8;
     drop(escrow_data);
     solana_program::program::invoke_signed(
