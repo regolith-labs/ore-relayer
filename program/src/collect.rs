@@ -43,31 +43,30 @@ pub fn process_collect<'a, 'info>(
         return Err(RelayError::Dummy.into());
     }
 
-    // Update the last hash
+    // Assert sufficient miner reward
+    let sufficient_miner_reward = proof.balance.gt(&(escrow.last_balance + COMMISSION));
+    // Increment last balance & hash
+    escrow.last_balance = proof.balance;
     escrow.last_hash = proof.last_hash;
-
-    // Return early if proof doesn't have sufficient balance
-    if proof.balance.lt(&COMMISSION) {
-        return Ok(());
-    }
-
     // Claim commission
-    let escrow_authority = escrow.authority;
-    let escrow_bump = escrow.bump as u8;
-    drop(escrow_data);
-    drop(proof_data);
-    solana_program::program::invoke_signed(
-        &ore_api::instruction::claim(*escrow_info.key, *beneficiary_info.key, COMMISSION),
-        &[
-            escrow_info.clone(),
-            beneficiary_info.clone(),
-            proof_info.clone(),
-            treasury_info.clone(),
-            treasury_tokens_info.clone(),
-            token_program.clone(),
-        ],
-        &[&[ESCROW, escrow_authority.as_ref(), &[escrow_bump]]],
-    )?;
+    if sufficient_miner_reward {
+        let escrow_authority = escrow.authority;
+        let escrow_bump = escrow.bump as u8;
+        drop(escrow_data);
+        drop(proof_data);
+        solana_program::program::invoke_signed(
+            &ore_api::instruction::claim(*escrow_info.key, *beneficiary_info.key, COMMISSION),
+            &[
+                escrow_info.clone(),
+                beneficiary_info.clone(),
+                proof_info.clone(),
+                treasury_info.clone(),
+                treasury_tokens_info.clone(),
+                token_program.clone(),
+            ],
+            &[&[ESCROW, escrow_authority.as_ref(), &[escrow_bump]]],
+        )?;
+    }
 
     // Send transaction fee to miner
     **signer.lamports.borrow_mut() += fee;

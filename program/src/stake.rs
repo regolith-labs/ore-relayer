@@ -49,9 +49,12 @@ pub fn process_stake<'a, 'info>(accounts: &'a [AccountInfo<'info>], data: &[u8])
         ],
     )?;
 
+    // Increment last balance
+    let mut escrow_data = escrow_info.data.borrow_mut();
+    let escrow = Escrow::try_from_bytes_mut(&mut escrow_data)?;
+    escrow.last_balance += amount;
+
     // Stake ORE from escrow account
-    let escrow_data = escrow_info.data.borrow();
-    let escrow = Escrow::try_from_bytes(&escrow_data)?;
     let escrow_bump = escrow.bump as u8;
     drop(escrow_data);
     solana_program::program::invoke_signed(

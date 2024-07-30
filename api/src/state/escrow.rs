@@ -16,6 +16,9 @@ pub struct Escrow {
 
     /// The last hash this relayer has collected commission on.
     pub last_hash: [u8; 32],
+
+    /// The last observed balance of the escrowed proof acount.
+    pub last_balance: u64,
 }
 
 impl Default for Escrow {
@@ -24,6 +27,7 @@ impl Default for Escrow {
             authority: Pubkey::new_from_array([0; 32]),
             bump: 0,
             last_hash: [0; 32],
+            last_balance: 0,
         }
     }
 }
