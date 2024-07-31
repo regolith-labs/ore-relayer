@@ -3,12 +3,12 @@ resolver = "2"
 members = ["api", "program"]
 
 [workspace.package]
-version = "1.0.0-alpha.10"
+version = "1.0.0"
 edition = "2021"
 license = "Apache-2.0"
 homepage = "https://ore.supply"
 documentation = "https://ore.supply"
-repository = "https://github.com/regolith-labs/ore"
+repository = "https://github.com/regolith-labs/ore-relayer"
 readme = "./README.md"
 keywords = ["solana", "crypto", "mining"]
 
@@ -16,11 +16,11 @@ keywords = ["solana", "crypto", "mining"]
 array-const-fn-init = "0.1.1"
 bytemuck = "1.14.3"
 const-crypto = "0.1.0"
-drillx = { version = "2.0.0-beta.1", features = ["solana"] }
+drillx = { version = "1.0.0", features = ["solana"] }
 mpl-token-metadata = "4.1.2"
 num_enum = "0.7.2"
-ore-api = "2.0.0-beta.6"
-ore-utils = { version = "2.0.0-beta.6", features = ["spl"] }
+ore-api = "2.0.0"
+ore-utils = { features = ["spl"], version = "2.0.0" }
 solana-program = "^1.18"
 spl-token = { version = "^4", features = ["no-entrypoint"] }
 spl-associated-token-account = { version = "^2.3", features = ["no-entrypoint"] }
