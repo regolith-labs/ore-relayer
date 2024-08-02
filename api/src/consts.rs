@@ -7,4 +7,4 @@ pub const MINER_PUBKEY: Pubkey = pubkey!("F7coAFJKxeo1btofymv6f6KFmN5LUC9JEGRATR
 pub const ESCROW: &[u8] = b"escrow";
 
 /// The ore commission the relayer is allowed to collect
-pub const COMMISSION: u64 = 100;
+pub const COMMISSION: u64 = 10_000;
