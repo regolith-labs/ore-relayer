@@ -14,7 +14,7 @@ pub fn process_update_miner<'a, 'info>(
         return Err(ProgramError::NotEnoughAccountKeys);
     };
     load_signer(signer)?;
-    load_escrow(escrow_info, signer.key, false)?;
+    load_escrow(escrow_info, signer.key, true)?;
     load_any(miner_info, false)?;
     load_proof(proof_info, escrow_info.key, true)?;
     load_program(ore_program, ore_api::id())?;
@@ -27,12 +27,7 @@ pub fn process_update_miner<'a, 'info>(
     drop(escrow_data);
     solana_program::program::invoke_signed(
         &ore_api::instruction::update(*escrow_info.key, *miner_info.key),
-        &[
-            ore_program.clone(),
-            escrow_info.clone(),
-            miner_info.clone(),
-            proof_info.clone(),
-        ],
+        &[escrow_info.clone(), miner_info.clone(), proof_info.clone()],
         &[&[ESCROW, escrow_authority.as_ref(), &[escrow_bump]]],
     )?;
 

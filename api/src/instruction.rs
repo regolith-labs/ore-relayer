@@ -202,7 +202,7 @@ pub fn update_miner(signer: Pubkey, miner: Pubkey) -> Instruction {
         program_id: crate::id(),
         accounts: vec![
             AccountMeta::new(signer, true),
-            AccountMeta::new_readonly(escrow_pda.0, false),
+            AccountMeta::new(escrow_pda.0, false),
             AccountMeta::new_readonly(miner, false),
             AccountMeta::new(proof_pda.0, false),
             AccountMeta::new_readonly(ore_api::id(), false),
