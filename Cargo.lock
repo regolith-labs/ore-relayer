@@ -1335,7 +1335,7 @@ dependencies = [
 
 [[package]]
 name = "ore-relayer"
-version = "2.0.0"
+version = "2.1.0"
 dependencies = [
  "mpl-token-metadata",
  "ore-api",
@@ -1348,7 +1348,7 @@ dependencies = [
 
 [[package]]
 name = "ore-relayer-api"
-version = "2.0.0"
+version = "2.1.0"
 dependencies = [
  "bytemuck",
  "mpl-token-metadata",
