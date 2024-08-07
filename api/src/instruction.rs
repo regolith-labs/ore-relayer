@@ -169,7 +169,7 @@ pub fn open_escrow(signer: Pubkey, payer: Pubkey) -> Instruction {
         program_id: crate::id(),
         accounts: vec![
             AccountMeta::new(signer, true),
-            AccountMeta::new_readonly(MINER_PUBKEY, false),
+            AccountMeta::new_readonly(signer, false),
             AccountMeta::new(payer, true),
             AccountMeta::new(escrow_pda.0, false),
             AccountMeta::new(escrow_tokens_address, false),

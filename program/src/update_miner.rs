@@ -1,4 +1,4 @@
-use ore_relayer_api::{consts::*, error::RelayError, loaders::*};
+use ore_relayer_api::{consts::*, loaders::*};
 use ore_utils::AccountDeserialize;
 use solana_program::{
     account_info::AccountInfo, entrypoint::ProgramResult, program_error::ProgramError,
@@ -14,15 +14,10 @@ pub fn process_update_miner<'a, 'info>(
         return Err(ProgramError::NotEnoughAccountKeys);
     };
     load_signer(signer)?;
-    load_any_escrow(escrow_info, false)?;
-    load_system_account(miner_info, false)?;
+    load_escrow(escrow_info, signer.key, false)?;
+    load_any(miner_info, false)?;
     load_proof(proof_info, escrow_info.key, true)?;
     load_program(ore_program, ore_api::id())?;
-
-    // Error if signer is not valid
-    if signer.key.ne(&MINER_PUBKEY) {
-        return Err(RelayError::Dummy.into());
-    }
 
     // Update the miner keypair on the proof account.
     let escrow_data = escrow_info.data.borrow();
