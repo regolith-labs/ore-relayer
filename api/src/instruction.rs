@@ -193,3 +193,20 @@ pub fn open_escrow(signer: Pubkey, payer: Pubkey) -> Instruction {
         .concat(),
     }
 }
+
+// Builds an update_miner instruction.
+pub fn update_miner(signer: Pubkey, miner: Pubkey) -> Instruction {
+    let escrow_pda = Pubkey::find_program_address(&[ESCROW, signer.as_ref()], &crate::id());
+    let proof_pda = Pubkey::find_program_address(&[PROOF, escrow_pda.0.as_ref()], &ore_api::id());
+    Instruction {
+        program_id: crate::id(),
+        accounts: vec![
+            AccountMeta::new(signer, true),
+            AccountMeta::new_readonly(escrow_pda.0, false),
+            AccountMeta::new_readonly(miner, false),
+            AccountMeta::new(proof_pda.0, false),
+            AccountMeta::new_readonly(ore_api::id(), false),
+        ],
+        data: RelayInstruction::UpdateMiner.to_vec(),
+    }
+}
